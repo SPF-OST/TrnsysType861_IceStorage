@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioUserFile ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{2ADF5673-A421-4EE8-85D0-258BCC496480}">
+	<Configurations>
+		<Configuration Name="Debug|Win32" Command="C:\Trnsys17\Exe\TRNExe.exe" CommandArguments="C:\Daten\spfPackages\GIT\TrnsysType861_IceStorage\example\flat_plate\FP_type861.dck"/>
+		<Configuration Name="Release|Win32"/></Configurations></VisualStudioUserFile>

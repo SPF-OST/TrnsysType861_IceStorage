@@ -1058,6 +1058,7 @@ subroutine readParameters(iceStore,immersedHx)
         use iceStoreFunc
         use TrnsysFunctions
         use hxModule
+        use util
     
         implicit none                
         
@@ -1237,10 +1238,9 @@ subroutine readParameters(iceStore,immersedHx)
         iceStore%UlossTop = uAddTop
         iceStore%UlossBot = uAddBot                                  
                             
-        iceStore%order(1:nIHX) = immersedHx(1:nIHX)%orderHx 
+        iceStore%order(1:nIHX) = immersedHx(1:nIHX)%orderHx                                     
         
-        !in order to make this code open we need to reprogram this function. 
-        call INDEXX(nIHX,iceStore%order,iceStore%solutionOrderPositiveMDot)                              
+        call sortIndex(nIHX,iceStore%order,iceStore%solutionOrderPositiveMDot)
         
         iceStore%solutionOrderNegativeMDot(1:nIHX) = nIHX+1
                 

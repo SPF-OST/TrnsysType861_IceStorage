@@ -1,0 +1,151 @@
+include ..\\HxFuncTypes.gle
+include ..\\errorFuncSimTypes.gle 
+
+ny = 3
+sizeYT = ny*11
+sizeXT = 23
+size sizeXT sizeYT
+set texlabels 1
+heiNormal = 0.5
+sizeX = 11
+sizeY = 11
+x0  = 0.5
+y0  = 0.5
+moveX = -0.5
+moveY = 0.5
+lSize = 0.05
+sizeMarker = 0.07
+xLeft  = x0
+xRight = xLeft+sizeX-moveX
+yDown = y0
+if(ny>2) then
+	yMid  = yDown+sizeY-moveY
+else
+	yMid  = yDown
+end if
+yUp   = yMid+sizeY-moveY
+
+set hei heiNormal
+
+myStyle1 = 1
+myStyle2 = 2
+myStyle3 = 1
+myStyle4 = 1
+
+myColor1$ = "black"
+myColor2$ = "red"
+myColor3$ = "blue"
+myColor4$ = "black"
+
+myMarker1$ = "circle"
+myMarker2$ = "square"
+myMarker3$ = "diamond"
+myMarker4$ = "cross"
+
+myMarker10$ = "triangle"
+
+markerSize1 = 0.01
+markerSize2 = 0.01
+markerSize3 = 0.01
+markerSize4 = 0.01
+
+nCases = 1
+
+name1$ = "ClinaS-16hx"
+
+fileExp1$ = "power-downSized.dat" 
+fileErrorExp1$ = "upower-downSized.dat" 
+
+fileNum1$ = "numPower-downSized.dat" 
+
+xmin = 0.01
+xmax = 60
+ymin = -15
+ymax = 15
+
+!UPPER 
+amove xLeft yUp
+case$ = "Tin-Tout"
+HxData nCases case$
+
+myColor2$ = "black"
+
+ymin = -250
+ymax = 0
+
+amove xRight yUp
+case$ = "Energy"
+HxDataWithError nCases case$
+
+!MID LEFT
+
+ymin = -20
+ymax = 100
+
+amove xLeft yDown
+case$ = "Vr" 
+!case$ = "VrCalc" 
+
+HxData  nCases case$
+
+!MID LEFT
+
+ymin = -20
+ymax = 5
+
+amove xRight yDown
+case$ = "power"
+HxDataWithError nCases case$
+
+
+!MID LEFT
+
+xmin = -5
+xmax = 100
+
+ymin = -20
+ymax = 5
+
+amove xLeft yMid
+case$ = "Q-Vr" 
+HxData  nCases case$
+!MID RIGHT
+
+ymin = 0
+ymax = 5
+
+amove xRight yMid
+case$ = "UA-Vr"
+HxData  nCases case$
+
+!
+! LETTERS
+left  = sizeX/2+x0-0.3
+right = left+sizeX-moveX
+moveLetter = -0.2 
+up    = yUp+moveLetter
+mid   = yMid+moveLetter
+down  = yDown+moveLetter
+amove left up
+write "(a)"
+amove right up
+write "(b)"
+amove left mid
+write "(c)"
+amove right mid
+write "(d)"
+amove left down
+write "(e)"
+amove right down
+write "(f)"
+
+
+sizeMarker = 0.3
+
+begin key
+	set hei heiLegend
+	absolute xLeft+7.0 sizeYT-1.5 nobox  boxcolor clear	
+	marker  myMarker1$ msize sizeMarker color myColor1$ text "Experiments" separator 
+	line lstyle 1 lwidth 0.05 color myColor1$ text  "Simulations" 
+	
+end key

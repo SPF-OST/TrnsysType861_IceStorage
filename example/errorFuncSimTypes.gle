@@ -1,0 +1,142 @@
+
+
+sub HxDataWithError nCases case$
+
+		markerSize1 = 0.2
+
+		begin graph
+		size sizeX sizeY                     !Sets the size of the graph
+		x2axis on
+		y2axis on
+					
+		xaxis min xmin max xmax dticks myxdticks dsubticks myxdsubticks
+		yaxis min ymin max ymax dticks mydticks dsubticks mydsubticks		
+
+		
+		!(1)Time	 (2)Power 	 (3)uQ 	 (4)EAcum 	 (5)uEAcum
+
+		data fileErrorExp1$ d1=c1,c2  ignore 0	!Q		
+		data fileErrorExp1$ d2=c1,c3  ignore 0	!uQ
+		data fileErrorExp1$ d3=c1,c4  ignore 0	!EAum
+		data fileErrorExp1$ d4=c1,c5  ignore 0	!uEAcum
+		data fileErrorExp1$ d5=c1,c6  ignore 0	!UA
+		data fileErrorExp1$ d6=c1,c7  ignore 0	!uUA								
+		data fileNum1$ d7=c1,c5  ignore 1	!q Kw
+		data fileNum1$ d8=c1,c6  ignore 1	!e Kwh		
+		data fileNum1$ d9=c1,c10  ignore 0	!Ua		
+		data fileNum1$ d10=c1,c14  ignore 0	!Vr
+		
+
+		if(nCases>1) then	
+								
+			data fileNum2$ d107=c1,c5  ignore 1	!q Kw
+			data fileNum2$ d108=c1,c6  ignore 1	!e Kwh		
+			data fileNum2$ d109=c1,c10  ignore 0	!Ua		
+			data fileNum2$ d110=c1,c14  ignore 0	!Vr
+		end if
+		
+		if(nCases>2) then	
+										
+			data fileNum3$ d207=c1,c5  ignore 1	!q Kw
+			data fileNum3$ d208=c1,c6  ignore 1	!e Kwh		
+			data fileNum3$ d209=c1,c10  ignore 0	!Ua		
+			data fileNum3$ d210=c1,c14  ignore 0	!Vr
+		end if
+		
+		if(nCases>3) then	
+										
+			data fileNum4$ d307=c1,c5  ignore 1	!q Kw
+			data fileNum4$ d308=c1,c6  ignore 1	!e Kwh		
+			data fileNum4$ d309=c1,c10  ignore 0	!Ua		
+			data fileNum4$ d310=c1,c14  ignore 0	!Vr
+		end if
+		
+		key pos tr hei heiNormal
+							
+		if(case$="Energy") then
+		
+			xtitle "Time [h]"			
+			ytitle "$Q$ [kWh]"						
+								
+			d3 marker myMarker1$ msize markerSize1 color myColor1$ errup d4 errdown d4 errwidth 0.
+			d8 line lstyle myStyle1 lwidth lSize color myColor1$ 											
+
+			if(nCases>1) then
+				!d103 marker myMarker2$ msize markerSize2 color myColor2$ errup d104 errdown d104 errwidth 0.
+				d108 line lstyle myStyle2 lwidth lSize color myColor2$ 														
+			end if
+			
+			if(nCases>2) then
+				!d203 marker myMarker3$ msize markerSize3 color myColor3$ errup d204 errdown d204 errwidth 0.
+				d208 line lstyle myStyle3 lwidth lSize color myColor3$ 														
+			end if
+			
+			if(nCases>3) then
+				!d303 marker myMarker4$ msize markerSize4 color myColor4$ errup d304 errdown d304 errwidth 0.
+				d308 line lstyle myStyle4 lwidth lSize color myColor4$ 														
+			end if
+			
+		else if(case$="Power") then
+		
+			xtitle "Time [h]"			
+			ytitle "$\dot Q$ [kW]"						
+														
+            d1 marker myMarker1$ msize markerSize1 color myColor1$ errup d2 errdown d2 errwidth 0.
+			d7 line lstyle myStyle1 lwidth lSize color myColor1$ 											
+			
+			if(nCases>1) then
+				!d101 marker myMarker2$ msize markerSize2 color myColor2$ errup d102 errdown d102 errwidth 0.
+				d107 line lstyle myStyle2 lwidth lSize color myColor2$ 														
+			end if
+			
+			if(nCases>2) then
+				!d201 marker myMarker3$ msize markerSize3 color myColor3$ errup d202 errdown d202 errwidth 0.
+				d207 line lstyle myStyle3 lwidth lSize color myColor3$ 														
+			end if
+			
+			if(nCases>3) then
+				!d301 marker myMarker4$ msize markerSize4 color myColor4$ errup d302 errdown d302 errwidth 0.
+				d307 line lstyle myStyle4 lwidth lSize color myColor4$ 														
+			end if
+			
+						
+		else if(case$="UA") then
+		
+			xtitle "Time [h]"			
+			ytitle "$UA$ [kW/K]"						
+								
+			d5 marker myMarker1$ msize markerSize1 color myColor1$ errup d6 errdown d6 errwidth 0.
+			d9 line lstyle myStyle1 lwidth lSize color myColor1$ 											
+												
+			if(nCases>1) then
+				!d105 marker myMarker2$ msize markerSize2 color myColor2$ errup d106 errdown d106 errwidth 0.
+				d109 line lstyle myStyle2 lwidth lSize color myColor2$ 														
+			end if
+			
+			if(nCases>2) then
+				!d205 marker myMarker3$ msize markerSize3 color myColor3$ errup d206 errdown d206 errwidth 0.
+				d209 line lstyle myStyle3 lwidth lSize color myColor3$ 														
+			end if
+			
+			if(nCases>3) then
+				!d305 marker myMarker4$ msize markerSize4 color myColor4$ errup d306 errdown d306 errwidth 0.
+				d309 line lstyle myStyle4 lwidth lSize color myColor4$ 														
+			end if
+			
+		else if(case$="Vr") then
+		
+			xtitle "Time [h]"
+			ytitle "$V_r$ $[\frac{kg_{ice}}{kg_{water}}]$"
+						
+			!d13 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  !key "$Q_{hx}$"
+			!d203 line lstyle myStyle1 lwidth lSize color myColor1$ 											
+											
+			
+		end if
+		
+
+				
+	end graph                               
+
+end sub
+	

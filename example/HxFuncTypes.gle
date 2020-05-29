@@ -1,0 +1,656 @@
+
+
+
+sub HxData nCases case$ 
+
+		sizeMarker = 0.2
+		begin graph
+		size sizeX sizeY                     !Sets the size of the graph
+		x2axis on
+		y2axis on
+	
+		
+			xaxis min xmin max xmax dticks myxdticks dsubticks myxdsubticks
+			yaxis min ymin max ymax dticks mydticks dsubticks mydsubticks		
+		
+		
+		data fileExp1$ d1=c1,c2  ignore 0	!tinHx		
+		data fileExp1$ d2=c1,c3  ignore 0	!toutHx
+		data fileExp1$ d3=c1,c5  ignore 0	!q Kw
+		data fileExp1$ d4=c1,c6  ignore 0	!e Kwh
+		data fileExp1$ d5=c1,c7  ignore 0	!tAv
+		data fileExp1$ d6=c1,c8  ignore 0	!Eff
+		data fileExp1$ d7=c1,c9  ignore 0	!Lmtd
+		data fileExp1$ d8=c1,c10  ignore 0	!Ua
+		data fileExp1$ d9=c1,c11  ignore 0	!U
+		data fileExp1$ d10=c9,c11  ignore 0	!U				
+		data fileExp1$ d11=c1,c12  ignore 0	!Qcycle- kWh
+		data fileExp1$ d12=c1,c13  ignore 0	!Qcycle+ kWh		
+		data fileExp1$ d13=c1,c14  ignore 0	!Vr
+		data fileExp1$ d14=c14,c11 ignore 0	!U vs Vr
+		data fileExp1$ d15=c14,c5 ignore 0	!Q vs Vr
+		data fileExp1$ d16=c14,c8 ignore 0	!Eff vs Vr
+		data fileExp1$ d17=c1,c22 ignore 0	! Vr theoretic
+		data fileExp1$ d18=c14,c10  ignore 0 !Ua vs Vr
+		data fileExp1$ d19 = c22,c10 ignore 0 !Ua vs VrCalc
+		data fileExp1$ d20 = c22,c5  ignore 0 !Q vs VrCalc
+		data fileExp1$ d21 = c1,c4  ignore 0  !mflow
+		!data fileExp1$ d22 = c14,c23  ignore 0  !Q/Tin vs Vr
+		!data fileExp1$ d23 = c1,c23  ignore 0  !Q/Tin vs Time
+		
+		data fileNum1$ d51=c1,c2  ignore 0	!tinHx		
+		data fileNum1$ d52=c1,c3  ignore 0	!toutHx
+		data fileNum1$ d53=c1,c5  ignore 0	!q Kw
+		data fileNum1$ d54=c1,c6  ignore 0	!e Kwh
+		data fileNum1$ d55=c1,c7  ignore 0	!tAv
+		data fileNum1$ d56=c1,c8  ignore 0	!Eff
+		data fileNum1$ d57=c1,c9  ignore 0	!Lmtd
+		data fileNum1$ d58=c1,c10  ignore 0	!Ua
+		data fileNum1$ d59=c1,c11  ignore 0	!U
+		data fileNum1$ d60=c9,c11  ignore 0	!U				
+		data fileNum1$ d61=c1,c12  ignore 0	!Qcycle- kWh
+		data fileNum1$ d62=c1,c13  ignore 0	!Qcycle+ kWh		
+		data fileNum1$ d63=c1,c14  ignore 0	!Vr
+		data fileNum1$ d64=c14,c11 ignore 0	!U vs Vr
+		data fileNum1$ d65=c14,c5 ignore 0	!Q vs Vr
+		data fileNum1$ d66=c14,c8 ignore 0	!Eff vs Vr
+		data fileNum1$ d67=c1,c22 ignore 0	! Vr theoretic
+		data fileNum1$ d68=c14,c10  ignore 0 !Ua vs Vr
+		data fileNum1$ d69 = c22,c10 ignore 0 !Ua vs VrCalc
+		data fileNum1$ d70 = c22,c5  ignore 0 !Q vs VrCalc
+		data fileNum1$ d71 = c1,c4  ignore 0  !mflow
+		data fileNum1$ d72 = c14,c23  ignore 0  !Q/Tin vs Vr
+		data fileNum1$ d73 = c1,c23  ignore 0  !Q/Tin vs Time
+		
+		if(nCases>1) then				
+
+			data fileNum2$ d151=c1,c2  ignore 0	!tinHx		
+			data fileNum2$ d152=c1,c3  ignore 0	!toutHx
+			data fileNum2$ d153=c1,c5  ignore 0	!q Kw
+			data fileNum2$ d154=c1,c6  ignore 0	!e Kwh
+			data fileNum2$ d155=c1,c7  ignore 0	!tAv
+			data fileNum2$ d156=c1,c8  ignore 0	!Eff
+			data fileNum2$ d157=c1,c9  ignore 0	!Lmtd
+			data fileNum2$ d158=c1,c10  ignore 0	!Ua
+			data fileNum2$ d159=c1,c11  ignore 0	!U
+			data fileNum2$ d160=c9,c11  ignore 0	!U				
+			data fileNum2$ d161=c1,c12  ignore 0	!Qcycle- kWh
+			data fileNum2$ d162=c1,c13  ignore 0	!Qcycle+ kWh		
+			data fileNum2$ d163=c1,c14  ignore 0	!Vr
+			data fileNum2$ d164=c14,c11 ignore 0	!U vs Vr
+			data fileNum2$ d165=c14,c5 ignore 0	  !Q vs Vr
+			data fileNum2$ d166=c14,c8 ignore 0	  !Q vs Vr
+			data fileNum2$ d167=c1,c22 ignore 0	  ! Vr theoretic
+			data fileNum2$ d168=c14,c10  ignore 0 !Ua vs Vr
+			data fileNum2$ d169=c22,c10 ignore 0  !Ua vs VrCalc
+			data fileNum2$ d170=c22,c5   ignore 0 !Q vs VrCalc
+			data fileNum2$ d171=c21,c4   ignore 0 !Q vs VrCalc
+		
+			
+		end if
+		
+		if(nCases>2) then
+			
+			data fileNum3$ d251=c1,c2  ignore 0	!tinHx		
+			data fileNum3$ d252=c1,c3  ignore 0	!toutHx
+			data fileNum3$ d253=c1,c5  ignore 0	!q Kw
+			data fileNum3$ d254=c1,c6  ignore 0	!e Kwh
+			data fileNum3$ d255=c1,c7  ignore 0	!tAv
+			data fileNum3$ d256=c1,c8  ignore 0	!Eff
+			data fileNum3$ d257=c1,c9  ignore 0	!Lmtd
+			data fileNum3$ d258=c1,c10  ignore 0	!Ua
+			data fileNum3$ d259=c1,c11  ignore 0	!U
+			data fileNum3$ d260=c9,c11  ignore 0	!U				
+			data fileNum3$ d261=c1,c12  ignore 0	!Qcycle- kWh
+			data fileNum3$ d262=c1,c13  ignore 0	!Qcycle+ kWh		
+			data fileNum3$ d263=c1,c14  ignore 0	!Vr
+			data fileNum3$ d264=c14,c11 ignore 0	!U vs Vr
+			data fileNum3$ d265=c14,c5 ignore 0	!Q vs Vr
+			data fileNum3$ d266=c14,c8 ignore 0	!Q vs Vr
+			data fileNum3$ d267=c1,c22 ignore 0	! Vr theoretic
+			data fileNum3$ d268=c14,c10  ignore 0 !Ua vs Vr		
+			data fileNum3$ d269=c22,c10 ignore 0 !Ua vs VrCalc
+			data fileNum3$ d270=c22,c5   ignore 0 !Q vs VrCalc			
+			data fileNum3$ d271=c21,c4   ignore 0 !Q vs VrCalc
+		    data fileNum3$ d272=c14,c23  ignore 0  !QTin
+		    data fileNum3$ d273=c1,c23  ignore 0  !QTin
+
+		end if
+		
+		if(nCases>3) then
+		
+
+			data fileNum4$ d351=c1,c2  ignore 0	!tinHx		
+			data fileNum4$ d352=c1,c3  ignore 0	!toutHx
+			data fileNum4$ d353=c1,c5  ignore 0	!q Kw
+			data fileNum4$ d354=c1,c6  ignore 0	!e Kwh
+			data fileNum4$ d355=c1,c7  ignore 0	!tAv
+			data fileNum4$ d356=c1,c8  ignore 0	!Eff
+			data fileNum4$ d357=c1,c9  ignore 0	!Lmtd
+			data fileNum4$ d358=c1,c10  ignore 0	!Ua
+			data fileNum4$ d359=c1,c11  ignore 0	!U
+			data fileNum4$ d360=c9,c11  ignore 0	!U				
+			data fileNum4$ d361=c1,c12  ignore 0	!Qcycle- kWh
+			data fileNum4$ d362=c1,c13  ignore 0	!Qcycle+ kWh		
+			data fileNum4$ d363=c1,c14  ignore 0	!Vr
+			data fileNum4$ d364=c14,c11 ignore 0	!U vs Vr
+			data fileNum4$ d365=c14,c5 ignore 0	!Q vs Vr
+			data fileNum4$ d366=c14,c8 ignore 0	!Q vs Vr
+			data fileNum4$ d367=c1,c22 ignore 0	! Vr theoretic
+			data fileNum4$ d368=c14,c10  ignore 0 !Ua vs Vr			
+			data fileNum4$ d369=c22,c10 ignore 0 !Ua vs VrCalc
+			data fileNum4$ d370=c22,c5   ignore 0 !Q vs VrCalc			
+			data fileNum4$ d371=c21,c4   ignore 0 !Q vs VrCalc
+		    data fileNum4$ d372=c14,c23  ignore 0  !QTin
+		    data fileNum4$ d373=c1,c23  ignore 0  !QTin			
+		end if
+		
+		
+		
+				
+		key pos tr hei heiNormal
+							
+		if(case$="Tin-Tout") then
+		
+			xtitle "$Time$ $[h]$"
+			ytitle "$T_{hx}$ $[^oC]$"	
+								
+			d1 marker    myMarker1$ msize sizeMarker color myColor1$  key "$T_{in}$"		
+			d2 marker    myMarker2$ msize sizeMarker color myColor2$  key "$T_{out}$"
+			d5 marker    myMarker3$ msize sizeMarker color myColor3$  key "$T_{avg}$"						
+			
+			d51 line lstyle myStyle1 lwidth lSize color myColor1$  !key "$T_{in}$"		
+			d52 line lstyle myStyle1 lwidth lSize color myColor2$  !key "$T_{out}$"
+			d55 line lstyle myStyle1 lwidth lSize color myColor3$   !key "$T_{avg}$"
+				
+			if(nCases>1) then
+				d151 line lstyle myStyle2 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				d152 line lstyle myStyle2 lwidth lSize color myColor2$  !key "$T_{out}$"
+				d155 line lstyle myStyle2 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if                                           !
+			                                                 !
+			if(nCases>2) then                                !
+				d251 line lstyle myStyle3 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				d252 line lstyle myStyle3 lwidth lSize color myColor2$  !key "$T_{out}$"
+				d255 line lstyle myStyle3 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if       
+			!
+			if(nCases>3) then                                !
+				d351 line lstyle myStyle4 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				d352 line lstyle myStyle4 lwidth lSize color myColor2$  !key "$T_{out}$"
+				d355 line lstyle myStyle4 lwidth lSize color myColor3$  !key "$T_{avg}$"
+			end if                                           !
+			if(nCases>4) then                                !
+				d451 line lstyle myStyle5 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				d452 line lstyle myStyle5 lwidth lSize color myColor2$  !key "$T_{out}$"
+				d455 line lstyle myStyle5 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if                                           !
+			if(nCases>5) then                                !
+				d501 line lstyle myStyle6 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				d502 line lstyle myStyle6 lwidth lSize color myColor2$ !key "$T_{out}$"
+				d505 line lstyle myStyle6 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if
+						
+			key pos tr hei heiNormal offset -0.3 0
+			
+		else if(case$="Tavg") then
+		
+			xtitle "$Time$ $[h]$"			
+			ytitle "$T_{store,av}$ $[^oC]$"	
+								
+			d5  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d55 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d105  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d155 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d205  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d255 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d305  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d355 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     
+			
+			if(nCases>4) then                                
+				!d405  marker    myMarker5$ msize sizeMarker color myColor5$  !key "$T_{out}$"
+				d455 yaxis line lstyle myStyle5 lwidth lSize color myColor5$  !key "$Q_{hx}$"					
+			end if                                           
+			if(nCases>5) then                                
+				!d505  marker    myMarker6$ msize sizeMarker color myColor6$  !key "$T_{out}$"
+				d555 yaxis line lstyle myStyle6 lwidth lSize color myColor6$  !key "$Q_{hx}$"					
+			end if				
+						
+			key pos tr hei heiNormal offset -0.3 0
+			
+		else if(case$="Tin") then
+		
+			xtitle "$Time$ $[h]$"
+			!ytitle "$T_{out,hx}$ $[^oC]$"	
+			ytitle "$T_{in,hx}$ $[^oC]$"	
+								
+			d1 line lstyle myStyle1 lwidth lSize color myColor1$  !key "$T_{in}$"		
+			!d2 line lstyle myStyle1 lwidth lSize color myColor2$  !key "$T_{out}$"
+			!d5 line lstyle myStyle1 lwidth lSize color myColor3$  key "$T_{avg}$"						
+			
+			if(nCases>1) then
+				d101 line  lstyle myStyle2 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				!d102 line lstyle myStyle2 lwidth lSize color myColor2$  !key "$T_{out}$"
+				!d105 line lstyle myStyle2 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if                                           !
+			                                                 !
+			if(nCases>2) then                                !
+				d201 line  lstyle myStyle3 lwidth lSize color myColor1$  !key "$T_{in}$"		
+				!d202 line lstyle myStyle3 lwidth lSize color myColor2$  !key "$T_{out}$"
+				!d205 line lstyle myStyle3 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if       
+			!
+			if(nCases>3) then                                !
+				d301 line lstyle  myStyle4 lwidth lSize color myColor4$  !key "$T_{in}$"		
+				!d302 line lstyle myStyle4 lwidth lSize color myColor4$  !key "$T_{out}$"
+				!d305 line lstyle myStyle4 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if                                           !
+			if(nCases>4) then                                !
+				d401 line lstyle  myStyle5 lwidth lSize color myColor5$  !key "$T_{in}$"		
+				!d402 line lstyle myStyle5 lwidth lSize color myColor5$  !key "$T_{out}$"
+				!d405 line lstyle myStyle5 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if                                           !
+			if(nCases>5) then                                !
+				d501 line lstyle  myStyle6 lwidth lSize color myColor6$  !key "$T_{in}$"		
+				!d502 line lstyle myStyle6 lwidth lSize color myColor6$ !key "$T_{out}$"
+				!d505 line lstyle myStyle6 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if
+		
+		else if(case$="Tout") then
+		
+			xtitle "Time [h]"
+			ytitle "$T_{out,hx}$ [$^o$C]"	
+								
+			!d1 marker myMarker10$ msize sizeMarker color myColor1$  key "$T_{in}$"	
+			d2  marker       myMarker1$ msize sizeMarker color myColor1$  !key "$T_{out}$"
+			d52 line lstyle  myStyle1 lwidth lSize color myColor1$        !key "$T_{out,num}$"
+			
+			
+			if(nCases>1) then
+				!d101 marker myMarker10$ msize sizeMarker color myColor2$  !key "$T_{in}$"		
+				!d102 marker myMarker2$ msize sizeMarker color myColor2$   !key "$T_{out}$"
+				d152 line lstyle  myStyle2 lwidth lSize color myColor2$        !key "$T_{out,num}$"
+
+			end if                                           !
+			                                                 !
+			if(nCases>2) then                                !
+				!d201 marker myMarker10$ msize sizeMarker color myColor3$  !key "$T_{in}$"		
+				!d202 marker myMarker3$ msize sizeMarker color myColor3$   !key "$T_{out}$"
+				d252 line lstyle  myStyle3 lwidth lSize color myColor3$        !key "$T_{out,num}$"
+			end if       
+			!
+			if(nCases>3) then                                !
+				!d301 marker myMarker10$ msize sizeMarker color myColor4$  !key "$T_{in}$"		
+				!d302 marker myMarker4$ msize sizeMarker color myColor4$   !key "$T_{out}$"
+				d352 line lstyle  myStyle4 lwidth lSize color myColor4$        !key "$T_{out,num}$"
+			end if                                           !
+			
+			if(nCases>4) then                                !
+				!d401 marker myMarker10$ msize sizeMarker color myColor5$  !key "$T_{in}$"		
+				!d402 marker myMarker5$ msize sizeMarker color myColor5$   !key "$T_{out}$"
+				d452 line lstyle  myStyle5 lwidth lSize color myColor5$        !key "$T_{out,num}$"
+			end if                                           !
+			if(nCases>5) then                                !
+				!d501 line lstyle myStyle6 lwidth lSize color myColor6$  !key "$T_{in}$"		
+				!d502 line lstyle  myStyle6 lwidth lSize color myColor6$ !key "$T_{out}$"
+				d505 line lstyle myStyle6 lwidth lSize color myColor3$   !key "$T_{avg}$"
+			end if
+			
+			key pos br hei heiNormal offset 0 0
+
+		else if(case$="Energy") then
+		
+			xtitle "Time [h]"			
+			ytitle "$Q$ [kWh]"						
+								
+			d4  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d54 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d104  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d154 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d204  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d254 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d304  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d354 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     
+			
+			if(nCases>4) then                                
+				d404 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if                                           
+			if(nCases>5) then                                
+				d504 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if						
+
+		else if(case$="Energy-Power") then
+		
+			xtitle "$Time$ $[h]$"			
+			y2title "$Q$ $[kWh]$"						
+			ytitle "$\cdot Q$ [kW]"						
+			
+			d3 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  !key "$Q_{hx}$"			
+			d4 y2axis line lstyle myStyle1 lwidth lSize color myColor2$  !key "$Q_{hx}$"									
+			
+		else if(case$="mFlow") then
+		
+			xtitle "$Time$ $[h]$"			
+			ytitle "$\dot m$ $[kg/h]$"						
+								
+			d21 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  !key "$Q_{hx}$"
+			
+			if(nCases>1) then
+				d121 line lstyle myStyle2 lwidth lSize color myColor2$  					
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				d221 line lstyle myStyle3 lwidth lSize color myColor3$ 					
+			end if       
+			
+			if(nCases>3) then                                
+				d321 line lstyle myStyle4 lwidth lSize color myColor4$  					
+			end if     
+			
+			if(nCases>4) then                                
+				d421 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if                                           
+			if(nCases>5) then                                
+				d521 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if		
+			
+		else if(case$="Power") then
+		
+			xtitle "$Time$ $[h]$"			
+			ytitle "$\dot Q$ $[kW]$"						
+			
+			d3  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d53 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d103  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d153 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d203  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d253 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d303  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d353 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     
+						
+						
+		else if(case$="UA") then
+		
+			xtitle "$Time$ $[h]$"			
+			ytitle "$UA$ $[kW/K]$"						
+								
+			d8  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d58 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d108  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d158 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d208  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d258 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d308  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d358 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     	
+						
+		else if(case$="Vr") then
+		
+			xtitle "Time [h]"
+			ytitle "$V_r$ $[\frac{kg_{ice}}{kg_{water}}]$"
+						
+			d13  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d63 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+								
+			if(nCases>1) then
+				!d113  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d163 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d213  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d263 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d313  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d363 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if  
+
+			if(nCases>4) then                                
+				!d413  marker    myMarker5$ msize sizeMarker color myColor5$  !key "$T_{out}$"
+				d463 yaxis line lstyle myStyle5 lwidth lSize color myColor5$  !key "$Q_{hx}$"					
+			end if  			
+			
+		
+		else if(case$="VrCalc") then
+		
+			xtitle "Time [h]"
+			ytitle "$V_r^*$"			
+			
+			d17  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d63  line lstyle myStyle1 lwidth lSize color myColor1$  
+			
+			if(nCases>1) then
+				d163 line lstyle myStyle2 lwidth lSize color myColor2$  					
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				d263 line lstyle myStyle3 lwidth lSize color myColor3$ 					
+			end if       
+			
+			if(nCases>3) then                                
+				d363 line lstyle myStyle4 lwidth lSize color myColor4$  					
+			end if     
+			
+			if(nCases>4) then                                
+				d463 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if                                           
+			if(nCases>5) then                                
+				d563 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if	
+			
+		else if(case$="Q-Vr") then
+		
+			xtitle "$V_r$"
+			ytitle "$Q$ $[kW]$"
+			
+			d15  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d65 line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d115  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d165 line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d215  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d265  line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d315  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d365  line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     									
+			
+		else if(case$="Q-VrCalc") then
+		
+			xtitle "$V_r^*$"
+			ytitle "$Q$ $[kW]$"
+							
+			d20 marker    myMarker1$ msize sizeMarker color myColor1$    
+			d70 line lstyle myStyle1 lwidth lSize color myColor1$ 
+			
+			if(nCases>1) then
+				d170 line lstyle myStyle2 lwidth lSize color myColor2$  					
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				d270 line lstyle myStyle3 lwidth lSize color myColor3$ 					
+			end if       
+			
+			if(nCases>3) then                                
+				d370 line lstyle myStyle4 lwidth lSize color myColor4$  					
+			end if     
+			
+			if(nCases>4) then                                
+				d470 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if     
+			
+			if(nCases>5) then                                
+				d570 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if	
+			
+		else if(case$="UA-VrCalc") then
+		
+			xtitle "$V_r$"
+			ytitle "$UA$ $[kW/K]$"
+			
+			d19 marker    myMarker1$ msize sizeMarker color myColor1$    
+			d69 line lstyle myStyle1 lwidth lSize color myColor1$ 
+			
+			if(nCases>1) then
+				d169 line lstyle myStyle2 lwidth lSize color myColor2$  					
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				d269 line lstyle myStyle3 lwidth lSize color myColor3$ 					
+			end if       
+			
+			if(nCases>3) then                                
+				d369 line lstyle myStyle4 lwidth lSize color myColor4$  					
+			end if     
+			
+			if(nCases>4) then                                
+				d469 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if     
+			
+			if(nCases>5) then                                
+				d569 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if	
+			
+		else if(case$="UA-Vr") then
+		
+			xtitle "$V_r$"
+			ytitle "$UA$ $[kW/K]$"
+			
+			d18  marker    myMarker1$ msize sizeMarker color myColor1$    
+			d68 yaxis line lstyle myStyle1 lwidth lSize color myColor1$  
+
+			if(nCases>1) then
+				!d118  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d168 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d218  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d268 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d318  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d368 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     	
+							
+
+		else if(case$="Q-cycle") then
+		
+			xtitle "$Time$ $[h]$"
+			ytitle "$Q_{cycle}$ $[kWh]$"
+										
+			d11 line lstyle myStyle1 lwidth lSize	color myColor1$ !key "$Q_{cool}$"
+			d12 line lstyle myStyle1 lwidth lSize	color myColor1$ !key "$Q_{heat}$"									
+			
+			if(nCases>1) then
+				d111 line lstyle myStyle2 lwidth lSize color myColor2$  	
+				d112 line lstyle myStyle2 lwidth lSize color myColor2$  					
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				d211 line lstyle myStyle3 lwidth lSize color myColor3$ 		
+				d212 line lstyle myStyle3 lwidth lSize color myColor3$ 		
+				
+			end if       
+			
+			if(nCases>3) then                                
+				d311 line lstyle myStyle4 lwidth lSize color myColor4$  	
+				d312 line lstyle myStyle4 lwidth lSize color myColor4$  					
+			end if     
+			
+			if(nCases>4) then                                
+				d411 line lstyle myStyle5 lwidth lSize color myColor5$  				
+				d412 line lstyle myStyle5 lwidth lSize color myColor5$  				
+			end if  
+			
+			if(nCases>5) then                                
+				d511 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+				d512 line lstyle myStyle6 lwidth lSize color myColor6$ 					  
+			end if							
+
+		else if(case$="Eff") then
+		
+			xtitle "$Time$ $[h]$"
+			ytitle "$\epsilon$"				
+			
+			d6   marker    myMarker1$ msize sizeMarker color myColor1$ 										
+			d56 line lstyle myStyle1 lwidth lSize	color myColor1$ 
+			
+			if(nCases>1) then
+				!d106  marker    myMarker2$ msize sizeMarker color myColor2$  !key "$T_{out}$"
+				d156 yaxis line lstyle myStyle2 lwidth lSize color myColor2$  !key "$Q_{hx}$"
+			end if                                           
+			                                                 
+			if(nCases>2) then                                
+				!d206  marker    myMarker3$ msize sizeMarker color myColor3$  !key "$T_{out}$"
+				d256 yaxis line lstyle myStyle3 lwidth lSize color myColor3$  !key "$Q_{hx}$"
+			end if       
+			
+			if(nCases>3) then                                
+				!d306  marker    myMarker4$ msize sizeMarker color myColor4$  !key "$T_{out}$"
+				d356 yaxis line lstyle myStyle4 lwidth lSize color myColor4$  !key "$Q_{hx}$"					
+			end if     	
+			
+			
+		else if (case$="Eff-Vr") then
+		
+			xtitle "$V_r$ $\%$"
+			ytitle "$\epsilon$"				
+			
+			d16 line lstyle myStyle1 lwidth lSize	color myColor1$ 										
+			if(nCases>1) then
+				d116 line lstyle myStyle2 lwidth lSize	color myColor2$ 													
+			end if
+			
+		end if
+		
+
+				
+	end graph                               
+
+end sub
+	

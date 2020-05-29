@@ -138,5 +138,34 @@
             getLMTD = (dTi-dTo)/(log(dTi/dTo))            
         endif    
             
-    end function getLMTD
+  end function getLMTD
+  
+  subroutine sortIndex(n,vector,indexSorted)
+   
+    integer, intent(in) :: n
+    integer, intent(in) :: vector(n)
+    integer, intent(out) :: indexSorted(n)     
+    integer :: min,i,j,jj,notUsedYet
+    
+    indexSorted(1:n)=-1     
+   
+    
+    do i=1,n ! loop for remaining indexSorted         
+        min=n+1                    
+        do j=1,n  ! loop for all n vectors        
+            notUsedYet=1
+            do jj=1,n
+                if(j==indexSorted(jj)) notUsedYet=0
+            enddo
+            
+            if(vector(j)<min .and. notUsedYet==1) then                                    
+                min=vector(j)
+                indexSorted(i)=j
+            endif    
+            
+        enddo
+    enddo
+    
+  end subroutine sortIndex
+  
 end module util

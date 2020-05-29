@@ -86,7 +86,7 @@ module hxModule
             
             integer :: numberOfCv,&
                        orderHx !> if we have a value from 1 to 4 it means tha the outlet T goes to the following hx indicated by the index
-                                      !> 0 or -1 means that the outlet does not goe into any hx inlet
+                                      !> 0 or -1 means that the outlet does not go into any hx inlet
                        !allHxIsBlocked !> if all Cv are blocked for ice production =1, else = 0 
             
             double precision :: lambdaWall,& !> the thermal conductivity of the wall hx

@@ -144,8 +144,8 @@ The mathematical formulation of this model has been presented in \citet{carbonel
                            & \si{hx_{type}}=1  wall thickness flat plate &\si{dx_{wall,hx}} & m \\  
   \small{33+19(i-1)}& Order of hx from 1 to 4. Used only if seriesMode is active  &  & \\  
   \small{34+19(i-1)}& Hx thermal conductivity  & \si{$\lambda$_{hx,i}} & \si{W/(mK)}\\
-  \small{35+19(i-1)}& Heihgt of inlet on the hx & [0-1]?? & m \\
-   \small{36+19(i-1)}& Heihgt of outlet on the hx & [0-1]?? & m \\
+  \small{35+19(i-1)}& Relative height of inlet on the hx & [0-1] & m \\
+   \small{36+19(i-1)}& Relative height of outlet on the hx & [0-1] & m \\
  
    \small{37+19(i-1)}& Fluid thermal conductivity & \si{$\lambda$_{p,i}} & W/(mK) \\
    \small{38+19(i-1)}& Fluid specific heat & \si{c_{p,i}} & J/(kgK) \\
@@ -236,15 +236,15 @@ The definition of derivatives is used to calculate the number of control volumes
 \small{18 + 7(i-1)} & Total heat transfer coefficient for all parallel heat exchangers $i$ & \si{UA_{hx,i}} & W/K\\
 \vdots   &  for i=1 i $\leq$4 i=i+1 & \vdots & \vdots\\
 40 & 1: Heat exchangers are full of ice (collapse of ice storage); 0: not full &  & \\
-41 +(n-1) & Temperatrue of sensor n &&\si{\degreeCelsius}\\
+41 +(n-1) & Temperature of sensor n &&\si{\degreeCelsius}\\
 46 +(n-1) & Temperature of the storage for the Cv $n$ & \si{T_{n}} & \si{\degreeCelsius}   \\
 \vdots   &  for n=1 n $\leq$ nCv n=n+1 & \vdots & \vdots \\
 56 & Losses at the bottom & \si{q_{loss,bottom}} & W   \\
 57 +(n-1) & Losses for the Cv $n$ & \si{q_{loss,n}} & W   \\
 \vdots   &  for n=1 n $\leq$ nCv n=n+1 & \vdots & \vdots \\
 67 & Losses at the top & \si{q_{loss,top}} & W  \\
-68 & Temperature of the storageat the bottom & \si{T_{bottom}} & \si{\degreeCelsius}   \\
-69 & Temperature of the storageat the top & \si{T_{top}} & \si{\degreeCelsius}   \\
+68 & Temperature of the storage at the bottom & \si{T_{bottom}} & \si{\degreeCelsius}   \\
+69 & Temperature of the storage at the top & \si{T_{top}} & \si{\degreeCelsius}   \\
 70 & Heat transfer coefficient at the bottom & \si{U_{bottom}} & \si{W/(m^2K)}\\
 71 & Average heat transfer coefficient at the side of the storage & \si{U_{bottom}} &  \si{W/(m^2K)} \\
 72 & Heat transfer coefficient at the top & \si{U_{zop}} & \si{W/(m^2K)} \\
