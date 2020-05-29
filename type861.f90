@@ -742,11 +742,11 @@ subroutine checkParameters(iceStore,immersedHx)
        
    endif
        
-    if(iceStore%meltCrit<0.0) then
-        write(myMessage,*) 'Critical melting distance =',iceStore%meltCrit,'&
-         must be >= 0'
-        call messages(-1,trim(myMessage),'fatal',iUnit,iType)                               
-    endif
+   ! if(iceStore%meltCrit<0.0) then
+   !     write(myMessage,*) 'Critical melting distance =',iceStore%meltCrit,'&
+   !      must be >= 0'
+   !     call messages(-1,trim(myMessage),'fatal',iUnit,iType)                               
+   ! endif
       
     if(iceStore%maxIceFrac<0.0 .or. iceStore%maxIceFrac>=1.0) then
         write(myMessage,*) 'Maximum ice mass fraction =',iceStore%maxIceFrac,'&
@@ -1098,11 +1098,11 @@ subroutine readParameters(iceStore,immersedHx)
         iceStore%TSubcool   = getParameterValue(14)         !: Water<->Ice temperature [°C]
         iceStore%TFreeze    = getParameterValue(15)         !: Water<->Freezing temperature [°C]
         iceStore%iceFloatingIni = getParameterValue(16)     !: initial ice kg [kg]
-        iceStore%meltCrit   = getParameterValue(17)         !: Film critical melting thickness [m]
+        !iceStore%meltCrit   = getParameterValue(17)         !: Film critical melting thickness [m] . De-icing Implemented in Type 860
         
-        if(iceStore%meltCrit>=1.) then
-            iceStore%deIceIsPossible=0
-        endif        
+        !if(iceStore%meltCrit>=1.) then
+        !    iceStore%deIceIsPossible=0
+        !endif        
         
         iceStore%maxIceFrac = getParameterValue(18)         !: The maximum ice fraction [%]
         

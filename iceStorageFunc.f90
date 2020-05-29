@@ -490,6 +490,8 @@ end subroutine initializeMassOfIce
     
     iceStore%iceBlockGrowingMode = 0
     
+    iceStore%meltCrit=100. ! leave it. Not used in this TYPE, but changing to 0 will affect.
+    
 end subroutine initialize
 
 subroutine useOldTimeStep(iceStore,immersedHx)
