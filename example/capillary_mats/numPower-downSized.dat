@@ -1,4 +1,4 @@
-!File created with processIceEx v1-11-02-2016 at 05/29/20 13:56:49 
+!File created with processIceEx v1-11-02-2016 at 05/29/20 14:43:52 
 !hour	 oC  	  oC  	 kg/h  	 kW    	  kWh 	 - 	 oC 	 kW/K 	 W/m2K 	 kWh 	 kWh 	 [kg,i/kg,w] 	 [kWh]	 oC	 oC	 oC	 oC	 oC 	 [kg,i/kg,w] 	 [kW/K] 	 [kg] 	 [kg] [W/m2] 	 [W/m2] 	[W/m2] 	[W/m2] 	 [oC] 	 [oC] 	 [oC] 	 [oC] 	 [oC] 	 [oC]	 [0-1]
 !(1)Time	 (2)Tin 	 (3)TOut 	 (4)mFlow 	 (5)Power 	 (6)Energy 	 (7)tStoreAv 	 (8)eff 	 (9)lmd 	 (10)Ua 	 (11)U (12)eHxPerCycleNeg 	 (13)eHxPerCyclePos 	 (14)ratioIce 	 (15)eIcing 	 (16)Tz1	 (17)Tz2	 (18)Tz3	 (19)Tz4	 (20)Tz5	  (21)tAmb 	 (22) ratioIceCalc 	 (23) radioIce 	 (24) massIce (25) HF1 	 (26) HF2 	(27) HF3 	 (28) TS1 	 (29) TS2 	(30) TS3 	 (31) TwaterTS1 	 (32) TwaterTS2 	(33) TwaterTS3 (34) ThxTS1 	 (35) ThxTS2 	(36) ThxTS3 	(37) fConst
 0.138889	-2.262920	0.503916	2099.790381	-6.158361	-0.833335	2.206392	0.619074	2.866740	2.148211	1074.105351	-0.833335	0.000000	0.000000	0.000000	2.360613	2.360180	2.315301	2.032345	1.988554	22.000000	0.000000	0.002125	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	1.000000

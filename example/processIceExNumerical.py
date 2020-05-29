@@ -298,7 +298,7 @@ if __name__ == '__main__':
 
     path = r".\flat_plate"
     case = "ESSA-8Hx_T5_type861"
-
+    #
     path = r".\coils"
     case = "Coil_T5_type861"
 
