@@ -24,7 +24,10 @@ module iceStoreConst
     double precision, parameter :: tol = 1e-6 ! DANYK some imbalances                                                       
     
     double precision :: zeroMassFlowInKgs = 0.5/3600d0  ! 0.5 kg/h
-    double precision :: minMassFlowInKgs  = 2/3600d0   ! 2   kg/h 
+    double precision :: minMassFlowInKgs  = 2/3600d0    ! 2   kg/h 
+    
+    !double precision :: zeroMassFlowInKgs = 0.01/3600.  ! 0.01 kg/h all mdot>zeroMassFlow are assumed to be zero, all zero <mDot <min are assumed to be = min
+    !double precision :: minMassFlowInKgs  = 1.0/3600.   ! 2    kg/h 
     
 end module iceStoreConst
           
@@ -44,7 +47,8 @@ module hxModule
             !> 8 parameters for the 3 hx cases
             
             integer :: geometry,&  !< 0 flat plate, 1 cilinder, 2 capilar mat
-                       nParallelHx,& !< Number of parallel hx            
+                       nParallelHx,& !< Number of parallel hx    
+                       nParallelHxDef,& !< Number of parallel hx defined as input. To be used to affect with mass flws. NOT IMPLEMENTED YET
                        memoryAllocated,&
                        hxMode,&!< 0 no ice  1 ice 
                        reference,&!> the code I use to know which one it is 1,2,3,4
@@ -186,7 +190,7 @@ module hxModule
                                 qAcumIce
             
             integer, allocatable :: resetIceThickInCv(:),resetIceThickInAndMeltCv(:)
-            
+            integer, allocatable :: myCase(:),myCaseOld(:)
              
             double precision, allocatable :: qIceCv(:),&  ! formed ice o each cv
                                              !qMeltCv(:),& ! melted ice on hx for each cv   
@@ -343,7 +347,9 @@ module iceStoreDef
                    solutionOrder(nIHX),&
                    nUsedHx,&
                    nHxStore,&
-                   iceBlockGrowingMode
+                   iceBlockGrowingMode,&
+                   counterMassFlowZero,&
+                   counterMassFlowZeroOld
         
         double precision :: tStoreAv,& !> average temperature of the store [oC]
                             qAcumStore,&      !> acumulated heat for a time step [W]                                
@@ -354,7 +360,9 @@ module iceStoreDef
                             sumQIceAcum,&   !> The sum of all heat exchangers     
                             qAcumHx,&   !> acumulated heat in heat exchangers
                             fusedIceFloatMass,&
-                            imbalance   !> imbalance as imb = sumQHx - qAcumStore - isumQLoss  - qFused + sumQIce   
+                            imbalance,&   !> imbalance as imb = sumQHx - qAcumStore - isumQLoss  - qFused + sumQIce   
+                            iceTotalMassFromQLat,&
+                            iceTotalMassFromQLatOld
                            ! nCvInHxs   !> number of Storage Cv that belong to Hxs
                             
         double precision ::  meltCrit,&   !< Film critical melting thickness [m]

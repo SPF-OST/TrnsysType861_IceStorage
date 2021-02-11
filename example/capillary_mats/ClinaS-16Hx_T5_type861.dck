@@ -502,7 +502,7 @@ t1i  TCsHx1o MfrCsHx1i TinHx ToutHx MfrHx TavgPCM MassOfFloating iceThick MassOf
 Imbalance  sumQIce  sumQFused  sumQloss  sumQAcum  sumQHx qHeatIceHx  qCoolIceHx storeIsFullOfIce storageIsCollapsed 
 VIceRatio UA1 TSensorPcm1 TSensorPcm2 TSensorPcm3 TSensorPcm4 TSensorPcm5 Tamb dInIce dOutIce  
 dOutMeltIce fConstrained
-t1i  TCsHx1o MfrCsHx1i TinHx ToutHx MfrHx TavgPCM MassOfFloating iceThick MAssOfIce  
+t1i  TCsHx1o MfrCsHx1i TinHx ToutHx MfrHx TavgPCM MassOfFloating iceThick MassOfIce  
 Imbalance  sumQIce  sumQFused  sumQLoss  sumQAcum  sumQHx qHeatIceHx  qCoolIceHx storeIsFullOfIce storageIsCollapsed 
 VIceRatio  UA1 TSensorPcm1 TSensorPcm2 TSensorPcm3 TSensorPcm4 TSensorPcm5 Tamb dInIce dOutIce  
 dOutMeltIce fConstrained

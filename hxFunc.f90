@@ -246,7 +246,10 @@ module hxFunc
                                 
                 allocate(immersedHx(iHx)%volIceCv(numberOfCv),stat=error)
                 allocate(immersedHx(iHx)%volIceCvOld(numberOfCv),stat=error)
-                                                              
+                
+                allocate(immersedHx(iHx)%myCase(numberOfCv),stat=error)
+                allocate(immersedHx(iHx)%myCaseOld(numberOfCv),stat=error)
+                
                 do i=1,numberOfCv
                     
                     immersedHx(iHx)%tStore(i) = 0.0d0
@@ -328,6 +331,9 @@ module hxFunc
                     
                     immersedHx(iHx)%areaIceUsed(i)    = 0.0
                     
+                    immersedHx(iHx)%myCase(i) = 0                    
+                    immersedHx(iHx)%myCaseOld(i) = 0 
+                     
                 enddo
         
                 immersedHx(iHx)%t(numberOfCv+1) = 0.0d0
@@ -422,12 +428,66 @@ module hxFunc
                 deallocate(immersedHx(iHx)%volIceCv,stat=error)
                 deallocate(immersedHx(iHx)%volIceCvOld,stat=error)
                               
+                deallocate(immersedHx(iHx)%myCase,stat=error)
+                deallocate(immersedHx(iHx)%myCaseOld,stat=error)
+                
             end if
             
         enddo       
 
     end subroutine setMemoryFreeHx
+   
+subroutine resetHxToOldTimeStep(oneImmersedHx)
 
+    use iceStoreConst
+    use iceStoreDef
+    use hxModule
+    
+    implicit none                
+    
+    type (hxStruct), intent(inout), target :: oneImmersedHX 
+    integer :: iHx,i        
+                
+    oneImmersedHx%iceThickMelt = oneImmersedHx%iceThickMeltOld
+    oneImmersedHx%iceThick     = oneImmersedHx%iceThickOld
+    oneImmersedHx%iceThickIn   = oneImmersedHx%iceThickInOld
+            
+    oneImmersedHx%iceMass = oneImmersedHx%iceMassOld
+            
+    do i=1,oneImmersedHx%numberOfCv 
+            
+        oneImmersedHx%tIce(i) = oneImmersedHx%tIce0(i)                
+                           
+        oneImmersedHx%volIceCv(i) = oneImmersedHx%volIceCvOld(i)    
+        oneImmersedHx%iceMassCv(i) = oneImmersedHx%iceMassCvOld(i) 
+        
+        oneImmersedHx%qIceCv(i) = 0.0
+        oneImmersedHx%qHxCv(i) = 0.0
+        
+        if(oneImmersedHx%geometry==PLATE) then                
+                    
+            oneImmersedHx%resetIceThickInCv(i) = 0
+            oneImmersedHx%resetIceThickInAndMeltCv(i) = 0
+    
+            oneImmersedHx%iceThickCv(i) = oneImmersedHx%iceThickCvOld(i) 
+            oneImmersedHx%iceThickInCv(i) = oneImmersedHx%iceThickInCvOld(i)    
+            oneImmersedHx%iceThickMeltCv(i) = oneImmersedHx%iceThickMeltCvOld(i)                     
+                    
+        elseif(oneImmersedHx%geometry==COIL) then
+               
+            oneImmersedHx%resetDInIceToZero(i) = 0
+            oneImmersedHx%dEqCv(i) = oneImmersedHx%dEqCvOld(i)
+            oneImmersedHx%dOutIce(i) = oneImmersedHx%dOutIceOld(i)    
+            oneImmersedHx%dInIce(i) = oneImmersedHx%dInIceOld(i)  
+                    
+            oneImmersedHx%dOutMeltIce(i) = oneImmersedHx%dOutMeltIceOld(i)
+        endif
+                
+    enddo
+           
+       
+                     
+end subroutine resetHxToOldTimeStep 
 !--------------------------------------------------------------------------
 !>@brief : iterated the step by step model.
 !>@param : dTime time step in seconds
@@ -466,13 +526,7 @@ module hxFunc
             
         nHxCv = oneImmersedHx%numberOfCv
             
-        oneImmersedHx%tIte(1:nHxCv+1) = oneImmersedHx%t(1:nHxCv+1) !DC last should be updated too
-            
-        
-        if(iceStore%itDtTrnsys==395) then
-            dummy=1
-        endif
-         
+        oneImmersedHx%tIte(1:nHxCv+1) = oneImmersedHx%t(1:nHxCv+1) !DC last should be updated too                  
             
         do while (status==CONTINUE_ITE .and. nIte<=nMaxIter)                        
                                                 
@@ -605,10 +659,11 @@ module hxFunc
         
         nParallelHx = oneImmersedHx%nParallelHx 
         
-        if(mDot>zeroMassFlowInKgs .and. mDot<=minMassFlowInKgs) then
-            mDot=minMassFlowInKgs
-            nParallelHx=nParallelHx*mDot/minMassFlowInKgs
-        endif
+         !DC this should be commented.
+       !if(mDot>zeroMassFlowInKgs .and. mDot<=minMassFlowInKgs) then
+       !    mDot=minMassFlowInKgs
+       !    nParallelHx=nParallelHx*mDot/minMassFlowInKgs
+       !endif
         
         if(mDot<zeroMassFlowInKgs) then
                         
@@ -881,7 +936,7 @@ module hxFunc
   end subroutine heatExchangerStatus
     
   
-  subroutine checkHeatExchangerMass(iceStore,oneImmersedHx,ds,n,myCase)    
+  subroutine checkHeatExchangerMass(iceStore,oneImmersedHx,ds,n)    
     
     use hxModule            
     use iceStoreDef
@@ -892,11 +947,12 @@ module hxFunc
     
     type (hxStruct), intent(inout), target :: oneImmersedHX      
     type (iceStoreStruct), intent(inout), target :: iceStore    
-    integer, intent(in) :: n,myCase
+    integer, intent(in) :: n
     double precision, intent (in) :: ds
     double precision :: massIn,massOut,diffMass,addMass,AhxCv,mass,mass0,calcMass,calcMassFromVol
   
-    if(iceStore%verboseLevel>=3) then 
+    
+    if(iceStore%verboseLevel>=3 .and. oneImmersedHx%geometry==PLATE) then !only implemented for flat plates
                    
         AhxCv = oneImmersedHx%area/oneImmersedHx%numberOfCv
         
@@ -913,7 +969,7 @@ module hxFunc
         diffMass  = mass-massIn-massOut
                         
         if( abs(diffMass) > 1e-10  ) then
-            write(iceStore%MyMessage,*) 'calculateIceHxThickness Cv=',n,'MyCase',myCase,'diffMass= ',diffMass,' iceMass=',oneImmersedHx%iceMassCv(n),' addMassInThisDT=',addMass ,'iceMassHX=',massIn+massOut,'iceMassHX-In=',massIn,'iceMassHX-Out=',massOut                            
+            write(iceStore%MyMessage,*) 'calculateIceHxThickness Cv=',n,' MyCase=',oneImmersedHX%MyCase(n),' MyCaseOld=',oneImmersedHX%MyCaseOld(n),' diffMass= ',diffMass,' iceMass=',oneImmersedHx%iceMassCv(n),' addMassInThisDT=',addMass ,' iceMassHX=',massIn+massOut,' iceMassHX-In=',massIn,' iceMassHX-Out=',massOut                            
             call messages(-1,trim(iceStore%MyMessage),'NOTICE',iceStore%iUnit,iceStore%iType)
         endif
     endif
@@ -937,8 +993,8 @@ module hxFunc
     double precision :: dMeltEq,qIce,r1,r2,r1Total,r2Total,volIceOutAdded,dVolIce,&
                         volOfIceTotal,volOld1,volOld2,vDiff,volIcedCv,volOfIceFromOld,&
                         volOfIceOld, qLatentCalc, qDiff,qAcumIce,iceThickInSum,newIceIn, dl
-    double precision :: diffVolError    
-    integer ::  severalLayer,myCase,limiting,notpossible
+    double precision :: diffVolError,myVolOld,myVolNew,myVolIceError    
+    integer ::  severalLayer,limiting,notpossible,controlCheck !myCase
         
     dl = oneImmersedHx%dL        
      
@@ -947,11 +1003,16 @@ module hxFunc
     ! It could be that we switch from one condition to another during Trnsys iteration and therefore all ifs that are used to decide the case type should be
     ! linked to old values and not to actual ones. Otherwise convergence problems and even divegence may occur
     
+    !myCase = 0
+    oneImmersedHx%myCase(n)= 0
+       
+    
     if(oneImmersedHx%dInIceOld(n) > oneImmersedHx%dOut) then ! several layers  DC-FEB-17 DON'T CHANGE !!!!!         
         severalLayer = 1                                                                               
         if(oneImmersedHx%qHxCv(n)>=0.) then !ICING 
             r1 = 0.5*oneImmersedHx%dInIceOld(n)                            
-            myCase = 1                              
+            !myCase = 1        
+            oneImmersedHx%myCase(n)=1
         else ! MELTING                       
              ! If there is some ice that has not reach yet dMetlIce, then we reorganize the mass
              ! such that dInIce=0 and dMelt is decreased to add the mass of the ice included in dInIce
@@ -961,7 +1022,7 @@ module hxFunc
              volOld2 = pi/4.0*(oneImmersedHx%dInIceOld(n)**2-oneImmersedHx%dOut**2)*dl             
                     
              ! Calculate the equivalent diameter that conserve mass.            
-            
+             ! in Mycase=2 oneImmersedHx%dOutIceOld(n) can't be used anymore since we change it.
              dMeltEq= sqrt(oneImmersedHx%dOutIceOld(n)**2-4d0*(volOld1+volOld2)/pi/dl)
              
              if(isnan(dMeltEq)) then
@@ -969,8 +1030,9 @@ module hxFunc
              endif
              oneImmersedHx%resetDinIceToZero(n) = 1            
              !oneImmersedHx%dInIce(n) = oneImmersedHx%dOut changing this can create inestabilities DC-FEB-17                                                                  
-             r1 = 0.5*dMeltEq                            
-             myCase = 2
+             r1 = 0.5*dMeltEq  
+             !myCase = 2
+             oneImmersedHx%myCase(n)=2
                             
         endif                                                                        
     else      ! only one layer
@@ -978,24 +1040,29 @@ module hxFunc
                         
         if(oneImmersedHx%qHxCv(n)>=0.) then !ICING
             ! dIceIn GROW If melted ice then we grow from dOut
-            ! In this condition dMelt should not change so we use the Old value 
-                                    
+            ! In this condition dMelt should not change so we use the Old value, 
+            
+                                     
             if(oneImmersedHx%dOutMeltIceOld(n) > oneImmersedHx%dOut) then !it grows from rPipe as DiceIn
                 r1 = oneImmersedHx%dOut*0.5 
-                myCase = 3
+                !myCase = 3
+                oneImmersedHx%myCase(n)=3
             ! dIceOut GROW If not we grow from dOutIce
             else
                 r1 = 0.5*oneImmersedHx%dOutIceOld(n) ! it grows from dOutIce
-                myCase = 4
+                !myCase = 4
+                oneImmersedHx%myCase(n)=4
             endif
         else ! Melting one layer
             r1 = 0.5*oneImmersedHx%dOutMeltIceOld(n) ! it melts from dOutMelt
-            myCase = 5
+            !myCase = 5
+            oneImmersedHx%myCase(n)=5
         endif
     endif                                                                                                      
                     
     volIcedCv = abs(oneImmersedHx%qHxCv(n))*iceStore%dtsec/(iceStore%rhoIce*iceStore%H_pc*oneImmersedHx%nParallelHx)                                      
-    r2 = sqrt(volIcedCv/pi/dl+r1**2)                                       
+    
+    r2 = sqrt(volIcedCv/pi/dl+r1**2)   !in myCase=2 this is the melted radous after rEq, its not dOutIce !!                        
                     
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !VOLUME ADDED-MELTED CALCULATION!
@@ -1004,7 +1071,7 @@ module hxFunc
     dVolIce = 0.0
     volOfIceTotal = oneImmersedHx%volIceCvOld(n)
     
-    if(myCase==1 .or. myCase==3) then ! ICING  : myCase=1 several layer, it grows from dInIce and its limited by dMeltOut
+    if(oneImmersedHx%myCase(n)==1 .or. oneImmersedHx%myCase(n)==3) then ! ICING  : myCase=1 several layer, it grows from dInIce and its limited by dMeltOut
                                       ! ICING  : myCase=3 one layer it grows from dOut as dInIce and its limited by dMeltOut         
         oneImmersedHx%dInIce(n) = r2*2.0
         oneImmersedHx%dOutMeltIce(n) = oneImmersedHx%dOutMeltIceOld(n)
@@ -1019,29 +1086,18 @@ module hxFunc
         ! Limiting. The inner ice reached the melted ice layer. The rest of ice is built on the outer surface
         ! DC-FEB-17 I set it like this because it can change from melting to icing during different iterations and then it can happen that dOutMeltIce< dInIceOld !!! 
         ! This will cause big amount of ice produced, negative water volume and divergence
-        if(oneImmersedHx%dInIce(n)>oneImmersedHx%dOutMeltIceOld(n)) then                    
+        if(oneImmersedHx%dInIce(n)>oneImmersedHx%dOutMeltIceOld(n)) then  
+            oneImmersedHx%myCase(n)=oneImmersedHx%myCase(n)+10 !will be 10
             limiting = 1
             vDiff = pi/4.0*(oneImmersedHx%dInIce(n)**2-oneImmersedHx%dOutMeltIceOld(n)**2)*dl !DC-FEB-17                                                              
             oneImmersedHx%dInIce(n) = oneImmersedHx%dOutMeltIceOld(n)                                                                                                     
             !After ice grows in the inner layer, it grows in the outer layer
             !I move the vDiff ice volume to the outer surface
             oneImmersedHx%dOutIce(n) = sqrt(4.0*vDiff/pi/dl+oneImmersedHx%dOutIceOld(n)**2)
-                        
-            if(oneImmersedHx%dInIce(n)>oneImmersedHx%dOutIce(n)) then
-                iceStore%dummy=1
-            endif
-                
-            volOfIceTotal = pi/4.0*(oneImmersedHx%dOutIce(n)**2-oneImmersedHx%dOut**2)*dl
-            
-            if(abs(dVolIce-pi/4.0*(oneImmersedHx%dInIce(n)**2-oneImmersedHx%dInIceOld(n)**2)*dl-vDiff)>1e-10) then
-                iceStore%dummy=1
-            endif
-            !volOIce = pi/4.0*(oneImmersedHx%dInIce(n)**2-oneImmersedHx%dInIceOld(n)**2)*dl
-            !volOfIce = volOfIce + vDiff
-                                                                           
+            volOfIceTotal = pi/4.0*(oneImmersedHx%dOutIce(n)**2-oneImmersedHx%dOut**2)*dl                                                                       
         endif  
             
-    else if(myCase==4) then !ICING : one layer, it grows from dOutIce
+    else if(oneImmersedHx%myCase(n)==4) then !ICING : one layer, it grows from dOutIce
     
         oneImmersedHx%dOutIce(n) = r2*2.0                                  
         
@@ -1055,41 +1111,43 @@ module hxFunc
         r2Total = r2
         volOfIceTotal = pi*(r2Total**2-r1Total**2)*dl  
         
-    else if(myCase==2 .or. myCase==5) then ! myCase=2 MELTING : several layer. Melting from dMeltIceOld. We move dInIce to dOutIce and calculate dEq.
-                                           ! myCase=5 MELTING : one layer. Melting from dOutMeltIceOld
-                                            
-        limiting = 0                
-        oneImmersedHx%dOutMeltIce(n) = r2*2.0             
+    else if(oneImmersedHx%myCase(n)==2 .or. oneImmersedHx%myCase(n)==5) then ! myCase=2 MELTING : several layer. Melting from dMeltIceOld. We move dInIce to dOutIce and calculate dEq.
+                                           ! myCase=5 MELTING : one layer. Melting from dOutMeltIceOld                                  
+        limiting = 0    
+        oneImmersedHx%dOutMeltIce(n) = r2*2.0 
+   
         ! It can not be that in one iteration both grow, but it could happen in different iterations so I need to reset them DC-MAR-2017
+
         oneImmersedHx%dInIce(n) = oneImmersedHx%dInIceOld(n)
-        
-        if(isnan(oneImmersedHx%dOutMeltIce(n))) then
-            iceStore%dummy=1
-        endif
-                                       
+                           
         !Limiting
         if(oneImmersedHx%dOutMeltIce(n)>oneImmersedHx%dOutIce(n)) then
+            
+            oneImmersedHx%myCase(n)=oneImmersedHx%myCase(n)+10 !only for 50 
+            
             r2 = oneImmersedHx%dOutIce(n)/2.0
             oneImmersedHx%dOutMeltIce(n) = oneImmersedHx%dOutIce(n)                            
             limiting = 1
+           
+            !This needs to be corrected. I'm not sure if this is OK!!!
+            ! DC-V6
+            !volIcedCv = (r2**2-r1**2)*pi*dl            
+            !oneImmersedHx%qHxCv(n) = -volIcedCv*iceStore%rhoIce*iceStore%H_pc*oneImmersedHx%nParallelHx/iceStore%dtsec  !negative for melting                                    
+                                                                          
         endif                                               
-        
-         if(oneImmersedHx%dInIce(n)>oneImmersedHx%dOutMeltIce(n) .and. oneImmersedHx%resetDInIceToZero(n)==0) then
-                iceStore%dummy=1
-         endif
-         
+                    
         !r1 = oneImmersedHx%dOutMeltIceOld(n)/2.0 DC-FEB-17  ERROR r1 is calculated before, for myCase2=dEq for myCase=5 is dOutMeltOld
-        r2 = oneImmersedHx%dOutMeltIce(n)/2.0
+        !r2 = oneImmersedHx%dOutMeltIce(n)/2.0 actually this is fixed above in case of limiting
                 
         ! total mass left in HX
         r2Total = 0.5*oneImmersedHx%dOutIce(n)
-        r1Total = r2                                       
+        r1Total = r2 !0.5*oneImmersedHx%dOutMeltIce(n)    this creates imbalances. CHECK WHY? chech limiting                                  
                 
-        ! Total mass melted in this time step. We simplify and linealize for one time step                    
-        dVolIce = pi*(r2**2-r1**2)*dl  
         ! total mass in HX
         volOfIceTotal = pi*(r2Total**2-r1Total**2)*dl            
         
+        ! Total mass melted in this time step. We simplify and linealize for one time step                    
+        dVolIce = pi*(r2**2-r1**2)*dl 
     endif
           
     qIce = dVolIce*iceStore%rhoIce*iceStore%H_pc*oneImmersedHx%nParallelHx/iceStore%dtsec    
@@ -1108,15 +1166,70 @@ module hxFunc
         volOfIceFromOld  = oneImmersedHx%volIceCvOld(n) - dVolIce
     endif   
     
-    if(abs(volOfIceFromOld-volOfIceTotal)>1e-8) then
-        diffVolError = volOfIceFromOld-volOfIceTotal
-        iceStore%dummy=1
-    endif        
+   if(abs(volOfIceFromOld-volOfIceTotal)>1e-8) then ! this should be related to volume storage
+       diffVolError = volOfIceFromOld-volOfIceTotal
+              
+       volOld1 = pi/4.0*(oneImmersedHx%dOutIceOld(n)**2-oneImmersedHx%dOutMeltIceOld(n)**2)*dl                        
+       volOld2 = pi/4.0*(oneImmersedHx%dInIceOld(n)**2-oneImmersedHx%dOut**2)*dl  !this would be reset to zero if myCase=2!
+       myVolOld = volOld1+ volOld2
+       myVolIceError = oneImmersedHx%volIceCvOld(n)-myVolOld
+       
+       if(iceStore%verboseLevel>0) then            
+           write(iceStore%MyMessage,*) 'Vol of ice error in Hx DtIte=',iceStore%itDtTrnsys,' Cv=',n,' myCase=',oneImmersedHx%myCase(n),' diffVolError=',diffVolError,' myCaseOld=',oneImmersedHx%myCaseOld(n)
+           call messages(-1,trim(iceStore%MyMessage),'NOTICE',iceStore%iUnit,iceStore%iType)
+       endif               
+   endif        
                     
-    oneImmersedHx%volIceCv(n)  = volOfIceTotal ! volOfIceFromOld 
-    oneImmersedHx%iceMassCv(n) = volOfIceTotal*iceStore%rhoIce*oneImmersedHx%nParallelHx             
-    oneImmersedHx%dEqCv(n)   = sqrt(4.0*oneImmersedHx%volIceCv(n)/pi/dl+oneImmersedHx%dOut**2)                 
     
+    oneImmersedHx%volIceCv(n)  = volOfIceTotal ! volOfIceFromOld 
+    oneImmersedHx%iceMassCv(n) = volOfIceTotal*iceStore%rhoIce*oneImmersedHx%nParallelHx    
+    !THIS IS AN ERROR AND I DONT KNOW WHY THE VOLICETOTAL != VOLOFICEFROMOLD!!!!!
+    
+    !oneImmersedHx%volIceCv(n)  = volOfIceFromOld 
+    !oneImmersedHx%iceMassCv(n) = volOfIceFromOld*iceStore%rhoIce*oneImmersedHx%nParallelHx    
+    oneImmersedHx%dEqCv(n)   = sqrt(4.0*oneImmersedHx%volIceCv(n)/pi/dl+oneImmersedHx%dOut**2)                             
+  
+    if(iceStore%verboseLevel>=4 .and. 0) then
+        controlCheck=0
+    
+        !myCase=2 and myCase=3 are only one time step. 
+        if(oneImmersedHx%myCaseOld(n)==4 .or. oneImmersedHx%myCaseOld(n)==11 .or. oneImmersedHx%myCaseOld(n)==13) then !icing    
+            if(oneImmersedHx%qHxCv(n)>0. .and. oneImmersedHx%myCase(n) .ne. 4) then !continue icing
+                controlCheck=1
+            else if (oneImmersedHx%qHxCv(n)<0. .and. (oneImmersedHx%myCase(n) .ne. 5 .and. oneImmersedHx%myCase(n) .ne. 15)) then !swithc to melt
+                controlCheck=2
+            endif
+        elseif(oneImmersedHx%myCaseOld(n)==5) then !melting
+            if(oneImmersedHx%qHxCv(n)<0. .and. (oneImmersedHx%myCase(n) .ne. 5 .and. oneImmersedHx%myCase(n) .ne. 15)) then !continue to melt
+                controlCheck=3
+            else if (oneImmersedHx%qHxCv(n)>0. .and. (oneImmersedHx%myCase(n) .ne. 3 .and. oneImmersedHx%myCase(n) .ne. 13)) then !ice again on a melted layer, double layer. To me this should be equal to 1
+                controlCheck=4
+            endif
+        elseif(oneImmersedHx%myCaseOld(n)==3) then !icing on a double layer
+            if(oneImmersedHx%qHxCv(n)>0. .and. oneImmersedHx%myCase(n) .ne. 1) then !continue to ice on a double layer
+                controlCheck=5
+            else if (oneImmersedHx%qHxCv(n)<0. .and. oneImmersedHx%myCase(n) .ne. 2) then !melt again on a double layer. Shifting ice to external layer.
+                controlCheck=6
+            endif
+        elseif(oneImmersedHx%myCaseOld(n)==1) then !icing on a double layer
+            if(oneImmersedHx%qHxCv(n)>0. .and. (oneImmersedHx%myCase(n) .ne. 1 .and. oneImmersedHx%myCase(n) .ne. 11)) then !continue to ice on a double layer
+                controlCheck=7
+            else if (oneImmersedHx%qHxCv(n)<0. .and. (oneImmersedHx%myCase(n) .ne. 2 .and. oneImmersedHx%myCase(n) .ne. 12)) then !melt again on a double layer. Shifting ice to external layer.
+                controlCheck=8
+            endif
+        elseif(oneImmersedHx%myCaseOld(n)==2) then !melting on a double layer
+            if(oneImmersedHx%qHxCv(n)<0. .and. (oneImmersedHx%myCase(n) .ne. 5 .and. oneImmersedHx%myCase(n) .ne. 15)) then !continue to melt. previous time step with a double layer
+                controlCheck=9
+            else if (oneImmersedHx%qHxCv(n)>0. .and. (oneImmersedHx%myCase(n) .ne. 3 .and. oneImmersedHx%myCase(n) .ne. 13)) then !continue to ice on a double layer
+                controlCheck=10
+            endif
+        endif
+      
+        if(controlCheck>0) then
+            write(iceStore%MyMessage,*) 'control check in Hx DtIte=',iceStore%itDtTrnsys,' controlcheck= ',controlcheck,' Cv=',n,' myCase=',oneImmersedHx%myCase(n),' myCaseOld=',oneImmersedHx%myCaseOld(n)
+            call messages(-1,trim(iceStore%MyMessage),'NOTICE',iceStore%iUnit,iceStore%iType)
+        endif 
+    endif
   end subroutine calculateIceHxThicknessPipeCv
    
   ! There is no control inside this function that avoids built more ice than the maxIceFrac fixed 
@@ -1134,7 +1247,7 @@ module hxFunc
     type (iceStoreStruct), intent(inout), target :: iceStore        
     integer, intent (in) :: n
     double precision :: AhxCv, ds, newIceIn, hSensible, addMass, meltedThick, oldMass
-    integer :: myCase, notpossible, dummy
+    integer :: notpossible, dummy
             
            
     hSensible = 0.0
@@ -1161,8 +1274,8 @@ module hxFunc
                                                
         !A fluid film forms between ice sheet and HX surface                              
             
-        !if(oneImmersedHx%iceThickInCvOld(n)>0.) then ITERATION PROBLEMS ????
-        if(oneImmersedHx%iceThickInCv(n)>0.) then
+        if(oneImmersedHx%iceThickInCvOld(n)>0.) then
+        !if(oneImmersedHx%iceThickInCv(n)>0.) then
                             
             ! if a 2nd layer exist but we melt, then we add the two ice layers in and out to the hx surface !!
             !oneImmersedHx%iceThickCv(n)   = oneImmersedHx%iceThickCvOld(n) + oneImmersedHx%iceThickInCvOld(n) + ds*oneImmersedHx%nParallelHx !! DANYK
@@ -1174,14 +1287,14 @@ module hxFunc
             ! we then need to reset the 2nd layer of ice to zero RESET SHOULD BE DONE AT UPDATE TIME STEP
             oneImmersedHx%resetIceThickInCv(n) = 1
                              
-            myCase = 1
+            oneImmersedHx%myCase(n) = 1
         else
             oneImmersedHx%iceThickMeltCv(n) = oneImmersedHx%iceThickMeltCvOld(n) - ds*oneImmersedHx%nParallelHx    
             oneImmersedHx%iceThickCv(n)     = oneImmersedHx%iceThickCvOld(n)     + ds*oneImmersedHx%nParallelHx  
-            myCase = 2
+            oneImmersedHx%myCase(n) = 2
                             
             if(oneImmersedHx%iceThickCv(n)==0) then !complete melting 
-                myCase=21
+                oneImmersedHx%myCase(n) =21
             endif
         endif                                                
                         
@@ -1196,18 +1309,20 @@ module hxFunc
                 
             if(newIceIn<=meltedThick) then !all formed ice on internal 2nd layer
                 oneImmersedHx%iceThickInCv(n) = newIceIn
-                myCase =  4
+                oneImmersedHx%myCase(n) =  4
                 oneImmersedHx%iceThickMeltCv(n) = max(oneImmersedHx%iceThickMeltCvOld(n) - ds*oneImmersedHx%nParallelHx,0.)
             else !part formed on internal and part on external
                 oneImmersedHx%iceThickInCv(n) = meltedThick !then this will be set to 0, but if I do it here we can have convergence problems.
                 oneImmersedHx%iceThickCv(n)   = oneImmersedHx%iceThickCvOld(n)+ (newIceIn-meltedThick)
+                !oneImmersedHx%iceThickCv(n) = oneImmersedHx%iceThickCv(n)+newIceIn !
+                
                 !oneImmersedHx%iceThickCv(n)   = oneImmersedHx%iceThickCvOld(n)+ newIceIn
                 oneImmersedHx%resetIceThickInAndMeltCv(n) = 1
-                myCase =  5                    
+                oneImmersedHx%myCase(n) =  5                    
             endif                                
                             
         else !only one layer exist
-            myCase = 6
+            oneImmersedHx%myCase(n) = 6
             oneImmersedHx%iceThickCv(n) = oneImmersedHx%iceThickCvOld(n) + ds*oneImmersedHx%nParallelHx
         endif
     else !ds = 0
@@ -1222,7 +1337,9 @@ module hxFunc
     
     oneImmersedHx%iceMassCv(n)  = max(oneImmersedHx%iceMassCvOld(n) + addMass,0.0d0)              
     oneImmersedHx%volIceCv(n)  = (oneImmersedHx%iceThickCv(n)+oneImmersedHx%iceThickInCv(n))*AhxCv                             
-        
+    
+   
+       
     
   end subroutine calculateIceHxThicknessPlateCv
     
@@ -1266,11 +1383,7 @@ module hxFunc
                         
             if(oneImmersedHx%iceMode(n)==0 .or. oneImmersedHx%qHxCv(n)==0) then                                
                 oneImmersedHx%qIceCv(n) = 0.0                                               
-            else
-                
-                if(oneImmersedHx%hxCvBlocked(n) .and. oneImmersedHx%qHxCv(n)>0.) then
-                    dummy=1
-                end if
+            else                                
                 
                 if(oneImmersedHx%geometry==PLATE) then
                     
@@ -1889,8 +2002,9 @@ end subroutine calculateIceHxThickness
                     !ntubesX = (2.0*hxData%nTubes-2.)/hxData%nTubes
                     !ntubesY = (2.0*iceStore%nRealHx-2.)/iceStore%nRealHx
                     
-                    ntubesX = hxData%nTubes
-                    ntubesY = iceStore%nRealHx
+                    !DC-21 !!
+                    ntubesX = max(immersedHx(iHx)%nParallelHx/iceStore%nRealHx,1) !hxData%nTubes
+                    ntubesY = max(immersedHx(iHx)%nParallelHx/ntubesX,1) !iceStore%nRealHx
                     
                     dUsed = max(hxData%dOutMeltIce(i),hxData%dOut)
                     
@@ -1990,12 +2104,11 @@ end subroutine calculateIceHxThickness
                        ! ntubesX = (2.0*hxData%nTubes-2.)/hxData%nTubes
                         !ntubesY = (2.0*iceStore%nRealHx-2.)/iceStore%nRealHx                             
                         
-                        ntubesX = hxData%nTubes
-                        ntubesY = iceStore%nRealHx
+                        !ntubesX = hxData%nTubes
+                        !ntubesY = iceStore%nRealHx
                         
-                         if(iceStore%timeInHours>20) then
-                            iceStore%dummy=1
-                         endif
+                        ntubesX = max(immersedHx(iHx)%nParallelHx/iceStore%nRealHx,1) !DC-21
+                        ntubesY = max(immersedHx(iHx)%nParallelHx/ntubesX,1) !DC-21                                           
                          
                         !hxData%phiOverlap(i) = 0. 
                         call getOverlappingAngle(iceStore,iceStore%xBetweenPipes,iceStore%yBetweenPipes,ntubesX,ntubesY,0.5*hxData%dOutIce(i),0.5*hxData2%dOutIce(i),hxData%dOut,hxData%phiOverlap(i))

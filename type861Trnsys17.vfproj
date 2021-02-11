@@ -5,7 +5,7 @@
 	<Configurations>
 		<Configuration Name="Debug|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
 				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/dll" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="C:\Trnsys17\Compilers\Cvf66\TRNDll\Debug" LocalVariableStorage="localStorageSave" LocalSavedScalarsZero="true" FloatingPointModel="strict" ExtendSinglePrecisionConstants="true" ExternalNameInterpretation="extNameUpperCase" CallingConvention="callConventionCRef" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" RuntimeChecks="rtChecksAll" BoundsCheck="true" DescriptorDataTypeCheck="true" DescriptorDataSizeCheck="true" ArgTempCreatedCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
-				<Tool Name="VFLinkerTool" OutputFile="C:\Trnsys17\UserLib\ReleaseDLLs\a$(InputName)-v10deb.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/$(InputName).pdb" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/$(InputName).lib" LinkDLL="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="C:\Trnsys17\UserLib\ReleaseDLLs\a$(InputName)-v11deb.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/$(InputName).pdb" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/$(InputName).lib" LinkDLL="true"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
 				<Tool Name="VFCustomBuildTool"/>
@@ -15,7 +15,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
 				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/dll" SuppressStartupBanner="true" AdditionalIncludeDirectories="C:\Trnsys17\Compilers\Cvf66\TRNDll\Release" LocalVariableStorage="localStorageSave" LocalSavedScalarsZero="true" FloatingPointModel="strict" ExtendSinglePrecisionConstants="true" ExternalNameInterpretation="extNameUpperCase" CallingConvention="callConventionCRef" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/"/>
-				<Tool Name="VFLinkerTool" OutputFile="C:\Trnsys17\UserLib\ReleaseDLLs\aType861_v10-rel.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/$(InputName).lib" LinkDLL="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="C:\Trnsys17\UserLib\ReleaseDLLs\aType861_v11-rel.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/$(InputName).lib" LinkDLL="true"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
 				<Tool Name="VFCustomBuildTool"/>

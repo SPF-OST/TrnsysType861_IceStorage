@@ -266,7 +266,7 @@ subroutine initializeMassOfIce(iceStore,immersedHx)
             
             nCvWithHx = 0
             
-            !Loop for all hx and Cv to see how many Cv have a hx in
+            !Loop for all hx and Cv to see how many Cv have ahx in
             
             do j=1,iceStore%nCv
                 cvWithHx=0
@@ -503,12 +503,6 @@ end subroutine initializeMassOfIce
     
     iceStore%meltCrit=100. ! leave it. Not used in this TYPE, but changing to 0 will affect.
     
-    iceStore%counterMassFlowZero=0
-    iceStore%counterMassFlowZeroOld=0
-    
-    iceStore%iceTotalMassFromQLat=0.0
-    iceStore%iceTotalMassFromQLatOld=0.0
-    
 end subroutine initialize
 
 subroutine useOldTimeStep(iceStore,immersedHx)
@@ -516,7 +510,6 @@ subroutine useOldTimeStep(iceStore,immersedHx)
     use iceStoreConst
     use iceStoreDef
     use hxModule
-    use hxFunc
     
     implicit none                
 
@@ -539,15 +532,59 @@ subroutine useOldTimeStep(iceStore,immersedHx)
     enddo
 
     do iHx=1,iceStore%nHx
+
         if(immersedHx(iHx)%isUsed) then
-            call resetHxToOldTimeStep(immersedHx(iHx))       
+                
+            
+            immersedHx(iHx)%iceThickMelt = immersedHx(iHx)%iceThickMeltOld
+            immersedHx(iHx)%iceThick     = immersedHx(iHx)%iceThickOld
+            immersedHx(iHx)%iceThickIn   = immersedHx(iHx)%iceThickInOld
+            
+            immersedHx(iHx)%iceMass = immersedHx(iHx)%iceMassOld
+            
+            do i=1,immersedHx(iHx)%numberOfCv 
+            
+                immersedHx(iHx)%tIce(i) = immersedHx(iHx)%tIce0(i)                
+                !immersedHx(iHx)%t0(i) = 0.5*(immersedHx(iHx)%t(i)+immersedHx(iHx)%t(i+1)) ! T is at the cv faces, while t0 is at the center                       
+                immersedHx(iHx)%volIceCv(i) = immersedHx(iHx)%volIceCvOld(i)    
+                immersedHx(iHx)%iceMassCv(i) = immersedHx(iHx)%iceMassCvOld(i) 
+                
+                if(immersedHx(iHx)%geometry==PLATE) then                
+                    
+                   
+                    
+                    immersedHx(iHx)%iceThickCv(i) = immersedHx(iHx)%iceThickCvOld(i) 
+                    immersedHx(iHx)%iceThickInCv(i) = immersedHx(iHx)%iceThickInCvOld(i)    
+                    immersedHx(iHx)%iceThickMeltCv(i) = immersedHx(iHx)%iceThickMeltCvOld(i)                     
+                    
+                elseif(immersedHx(iHx)%geometry==COIL) then
+                
+                    immersedHx(iHx)%dEqCv(i) = immersedHx(iHx)%dEqCvOld(i)
+                                
+                   
+                
+                    immersedHx(iHx)%dOutIce(i) = immersedHx(iHx)%dOutIceOld(i)    
+                    immersedHx(iHx)%dInIce(i) = immersedHx(iHx)%dInIceOld(i)  
+                    if(immersedHx(iHx)%dInIce(i)>immersedHx(iHx)%dOutIce(i)) then
+                    iceStore%dummy=1
+                    endif
+                    immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOutMeltIceOld(i)
+                endif
+                
+            enddo
+           
         endif
-    enddo            
+        
+    end do
+
     
+   
+                
+
 end subroutine useOldTimeStep 
         
     ! ===========================================================================
-    !> @brief: called once at the final time step for each iteration
+    !> @brief: called once in all calculation at the first time step ??
     !> @param  iceStore iceStoreStruct 
     !> @return iceStore with udated time step variables
     ! =========================================================================== 
@@ -577,6 +614,11 @@ end subroutine useOldTimeStep
         iceStore%volWaterOld(i) = iceStore%volWater(i)
         iceStore%iceMassHxCvOld(i) =iceStore%iceMassHxCv(i) 
     enddo
+
+    if(iceStore%ItDtTrnsys==5168) then
+            iceStore%dummy = 1
+    endif
+    
     
     do iHx=1,iceStore%nHx
 
@@ -610,8 +652,6 @@ end subroutine useOldTimeStep
                     if(immersedHx(iHx)%resetIceThickInCv(i) == 1) immersedHx(iHx)%iceThickInCv(i) = 0.0d0 !reset because of melting
                     if(immersedHx(iHx)%resetIceThickInAndMeltCv(i) == 1) then !reset becasue IceThicCvIn gets in contact with melted ice. 
                         !if(immersedHx(iHx)%iceThickInCv(i)>=immersedHx(iHx)%iceThickMeltCv(i)) then
-                       
-                        !immersedHx(iHx)%iceThickCv(i) = immersedHx(iHx)%iceThickCv(i) + immersedHx(iHx)%iceThickInCv(i) !DC-21
                         immersedHx(iHx)%iceThickInCv(i)   = 0.0
                         immersedHx(iHx)%iceThickMeltCv(i) = 0.0
                     endif
@@ -634,24 +674,22 @@ end subroutine useOldTimeStep
                     endif
                     
                     !CHECK THIS !!!!!!!!!!!!!!!!!
-                    if(abs(immersedHx(iHx)%dInIce(i)-immersedHx(iHx)%dOutMeltIce(i))<1e-15 .and. immersedHx(iHx)%dOutIce(i)>(immersedHx(iHx)%dOut+1e-10)) then
+                   !if(abs(immersedHx(iHx)%dInIce(i)-immersedHx(iHx)%dOutMeltIce(i))<1e-15 .and. immersedHx(iHx)%dOutIce(i)>(immersedHx(iHx)%dOut+1e-10)) then
+                   !    immersedHx(iHx)%dInIce(i)      = immersedHx(iHx)%dOut
+                   !    immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOut
+                   !endif
+                    
+                    if(immersedHx(iHx)%myCase(i)==11 .or. immersedHx(iHx)%myCase(i)==13) then !dInIce was limited to dOutMeltIce, we move from case 1 to status 4
                         immersedHx(iHx)%dInIce(i)      = immersedHx(iHx)%dOut
                         immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOut
                     endif
-                    
-                    !if(immersedHx(iHx)%myCase(i)==11 .or. immersedHx(iHx)%myCase(i)==13) then !dInIce was limited to dOutMeltIce, we move from case 1 to status 4
-                    !    immersedHx(iHx)%dInIce(i)      = immersedHx(iHx)%dOut
-                    !    immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOut
-                    !endif
-                    
                     
                     !If melted ice layer has reached the outer one, then we reset them
-                    if(abs(immersedHx(iHx)%dOutIce(i)-immersedHx(iHx)%dOutMeltIce(i))<1e-15 .and. immersedHx(iHx)%dOutIce(i)>(immersedHx(iHx)%dOut+1e-10)) then
-                        immersedHx(iHx)%dOutIce(i)     = immersedHx(iHx)%dInIce(i) ! Melt reaches dOut and we set Dout to Din if exist
-                        immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOut
-                        immersedHx(iHx)%dInIce(i)      = immersedHx(iHx)%dOut
-                        immersedHx(iHx)%myCase(i) = immersedHx(iHx)%myCase(i)+100
-                    endif
+                   !if(abs(immersedHx(iHx)%dOutIce(i)-immersedHx(iHx)%dOutMeltIce(i))<1e-15 .and. immersedHx(iHx)%dOutIce(i)>(immersedHx(iHx)%dOut+1e-10)) then
+                   !    immersedHx(iHx)%dOutIce(i)     = immersedHx(iHx)%dOut !immersedHx(iHx)%dInIce(i) Melt reaches dOut and we set Dout to Din if exist. Its not possible dInIce is >dout 
+                   !    immersedHx(iHx)%dOutMeltIce(i) = immersedHx(iHx)%dOut
+                   !    immersedHx(iHx)%dInIce(i)      = immersedHx(iHx)%dOut
+                   !endif
                     
                     !If inner ice layer has reached the melted one, then we reset them
                     
@@ -671,27 +709,22 @@ end subroutine useOldTimeStep
                     endif
                 endif
                                    
-                ! call checkHeatExchangerMass(iceStore,immersedHx(iHx),dummy,i,200)                               
+                call checkHeatExchangerMass(iceStore,immersedHx(iHx),dummy,i)                               
                 
                 immersedHx(iHx)%myCaseOld(i) = immersedHx(iHx)%myCase(i)                                
                 
-               
-    
-               
             enddo
            
         endif
         
     end do
 
-    if(iceStore%counterMassFlowZero>=100) then
-        iceStore%counterMassFlowZeroOld = 0
-    else
-        iceStore%counterMassFlowZeroOld = iceStore%counterMassFlowZero
-    endif    
-
-    iceStore%iceTotalMassFromQLatOld = iceStore%iceTotalMassFromQLat
+    if(iceStore%ItDtTrnsys>=43) then
+        iceStore%dummy=1
+    endif
     
+    
+
      if(iceStore%sumQHx>0. .and. iceStore%iceFloating>iceStore%iceFloatingOld .and. iceStore%iceIsReleased ==0) then
         write(iceStore%MyMessage,'("Heating Store and floating ice growing !!!")') 
         call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType)  
@@ -951,8 +984,7 @@ subroutine calculateQFromHxToStorage(iceStore,immersedHx)
         endif
         
 end subroutine calculateQFromHxToStorage
-
-
+     
 subroutine reCalculateMIceFromOutsideMelting(iceStore,immersedHx)
     
     use hxModule
@@ -964,7 +996,7 @@ subroutine reCalculateMIceFromOutsideMelting(iceStore,immersedHx)
     
     type(hxStruct), intent(inout) :: immersedHx(nIHX)    
     type(iceStoreStruct), intent(inout) :: iceStore 
-    double precision :: iceMassHxToCvStore,qFusedHxCv, volInner, volOuter, iceMassMelted, iceMassInner,iceMassOuter,AhxCv
+    double precision :: iceMassHxToCvStore,qFusedHxCv, volInner, volOuter, volIceOld,iceMassMelted
     integer :: j,k,i,correct  
     
     correct = 0   
@@ -987,63 +1019,85 @@ subroutine reCalculateMIceFromOutsideMelting(iceStore,immersedHx)
                                        
                     correct = 1                                       
                     
-                    immersedhx(j)%iceMassCv(k)  = max(immersedhx(j)%iceMassCv(k)-iceMassMelted,0.0)                                          
+                    immersedhx(j)%iceMassCv(k)  = max(immersedhx(j)%iceMassCv(k)-iceMassMelted,0.0)                      
+
+                    volIceOld = immersedHx(j)%volIceCv(k)
                     immersedHx(j)%volIceCv(k)   = immersedHx(j)%iceMassCv(k)/(immersedHx(j)%nParallelHx*iceStore%rhoIce)
                         
                     if(immersedHx(j)%geometry==PLATE) then
                         ! I use iceOld because if I use ice it is changed for each iteration in one time step
-                        ! and iceOld = ice in this case because no ice formed or melted is on.  
+                        ! and iceOld = ice in this case because no ice formed or melted is on.                                                                                                                                                    
+                        immersedHx(j)%iceThickCv(k) = immersedHx(j)%iceMassCv(k)/(immersedHx(j)%area/immersedHx(j)%numberOfCv*iceStore%rhoIce)
                         
-                        AhxCv = immersedHx(j)%area/immersedHx(j)%numberOfCv
-                        volInner = immersedHx(j)%iceThickInCv(k)*AhxCv
-                        volOuter = immersedHx(j)%iceThickCv(k)*AhxCv
-                        
-                        iceMassInner = volInner*immersedHx(j)%nParallelHx*iceStore%rhoIce
-                        iceMassOuter = volOuter*immersedHx(j)%nParallelHx*iceStore%rhoIce
-                        
-                        immersedHx(j)%iceThickCv(k) = immersedHx(j)%iceMassCv(k)/(AhxCv*iceStore%rhoIce)
-                                               
-                        if(iceMassMelted>=iceMassOuter) then !we melt all outside and thus icethickIn becomes icethick, so we reset ThickInToZero
-                            !immersedHx(j)%iceThickCv(k) = immersedHx(j)%iceMassCv(k)/(AhxCv*iceStore%rhoIce)
-                            immersedHx(j)%resetIceThickInCv(k) = 1                                
-                        endif
-                                                                
                     else                            
                         
-                        !if(immersedHx(j)%myCase(k)==2 .or. immersedHx(j)%myCase(k)==12) then !DC-21 IN this case we have not YET reset Din 
-                        if(immersedHx(j)%resetDinIceToZero(k) == 1) then !DC-21 THIS GENERATED LARGE MASS IMBALANCE !!!
-                            volInner = 0.0
-                        else
+                        volOuter =  pi*immersedHx(j)%dL*(immersedHx(j)%dOutIce(k)**2-immersedHx(j)%dOutMeltIce(k)**2)/4.0
+                        
+                        if(immersedHx(j)%myCase(k)==1 .or. immersedHx(j)%myCase(k)==11 .or. immersedHx(j)%myCase(k)==3 .or. immersedHx(j)%myCase(k)==13) then
                             volInner = pi*immersedHx(j)%dL*(immersedHx(j)%dInIce(k)**2-immersedHx(j)%dOut**2)/4.0
+                        else
+                            volInner = 0.
                         endif
                         
-                        if(immersedHx(j)%volIceCv(k) >= volInner) then ! We only melt the outer layer
-                            volOuter = immersedHx(j)%volIceCv(k) - volInner
-                            immersedHx(j)%dOutIce(k) = sqrt(volOuter*4.0/pi/immersedHx(j)%dL+immersedHx(j)%dOutMeltIce(k)**2)
-                            if(immersedHx(j)%dInIce(k)>immersedHx(j)%dOutIce(k) .and. immersedHx(j)%resetDinIceToZero(k)==0) then
-                                iceStore%dummy=1
-                            endif 
-                            if(abs(immersedHx(j)%dOutIce(k)-immersedHx(j)%dOut)<1e-10) then
-                                iceStore%dummy=1
+                        if(abs(volIceOld-(volOuter+volInner))>1e-15) then
+                            iceStore%dummy=1
+                        endif
+                    
+                        if(immersedHx(j)%volIceCv(k) <= volOuter) then ! We only melt the outer layer
+                                
+                            immersedHx(j)%dOutIce(k) = sqrt(volOuter*4.0/pi/immersedHx(j)%dL+immersedHx(j)%dOutMeltIce(k)**2)      
+                            
+                            immersedHx(j)%myCase(k) = immersedHx(j)%myCase(k)+100
+                            
+                        !if(immersedHx(j)%volIceCv(k) >= volInner) then ! We only melt the outer layer
+                        !    volOuter = immersedHx(j)%volIceCv(k) - volInner
+                        !    immersedHx(j)%dOutIce(k) = sqrt(volOuter*4.0/pi/immersedHx(j)%dL+immersedHx(j)%dOutMeltIce(k)**2)
+                        !    
+                        !    if(immersedHx(j)%dInIce(k)>immersedHx(j)%dOutIce(k) .and. immersedHx(j)%resetDinIceToZero(k)==0) then
+                        !        iceStore%dummy=1
+                        !    endif 
+                        !    if(abs(immersedHx(j)%dOutIce(k)-immersedHx(j)%dOut)<1e-10) then
+                        !        iceStore%dummy=1
+                        !    endif
+                        !    
+                        else  !we melt all the outer layer                                                                                          
+                            
+                            immersedHx(j)%dOutIce(k) =  immersedHx(j)%dOut
+                            immersedHx(j)%dOutMeltIce(k) =  immersedHx(j)%dOut
+                                
+                            if(volInner>=immersedHx(j)%volIceCv(k)-volOuter) then
+                            
+                                immersedHx(j)%dInIce(k) = sqrt((immersedHx(j)%volIceCv(k)-volOuter)*4.0/pi/immersedHx(j)%dL+immersedHx(j)%dOut**2)
+                                                               
+                                immersedHx(j)%myCase(k) = immersedHx(j)%myCase(k)+200
+                                
+                                write(iceStore%MyMessage,'("Melted all outer layer")') 
+                                call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType) 
+                            else
+                                
+                                immersedHx(j)%myCase(k) = immersedHx(j)%myCase(k)+300
+                                
+                                immersedHx(j)%dInIce(k) = immersedHx(j)%dOut
+                                
+                                write(iceStore%MyMessage,'("Melted more ice than existed in the outer layer")') 
+                                call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType) 
                             endif
                             
-                        else                                                               
-                                
-                            if(abs(immersedHx(j)%dInIce(k)-immersedHx(j)%dOutMeltIce(k))<1e-10) then
-                                    
-                                write(iceStore%MyMessage,'("DinIce reached dOutMelt. Be careful of convergence")') 
-                                call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType)  
-                                    
-                                ! We melt all the outer layer and not the inner layer
-                                ! So we have to correct and reduce the qMelt. Otherwise we would nned to melt the dInIce and becasue
-                                ! this function is called each iteration can be dangerous. Switching form one if to another.
-                                !immersedHx(j)%dInIce(k) = immersedHx(j)%dOut
-                                !immersedHx(j)%dOutMeltIce(k) = immersedHx(j)%dOut
-                                
-                            else                                                                                            
-                                write(iceStore%MyMessage,'("Melted more ice than existed in the outer layer")') 
-                                call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType)    
-                            endif
+                           !if(abs(immersedHx(j)%dInIce(k)-immersedHx(j)%dOutMeltIce(k))<1e-10) then
+                           !        
+                           !    write(iceStore%MyMessage,'("DinIce reached dOutMelt. Be careful of convergence")') 
+                           !    call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType)  
+                           !        
+                           !    ! We melt all the outer layer and not the inner layer
+                           !    ! So we have to correct and reduce the qMelt. Otherwise we would nned to melt the dInIce and becasue
+                           !    ! this function is called each iteration can be dangerous. Switching form one if to another.
+                           !    !immersedHx(j)%dInIce(k) = immersedHx(j)%dOut
+                           !    !immersedHx(j)%dOutMeltIce(k) = immersedHx(j)%dOut
+                           !    
+                           !else                                                                                            
+                           !    write(iceStore%MyMessage,'("Melted more ice than existed in the outer layer")') 
+                           !    call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType)    
+                           !endif
                                 
                             !immersedHx(j)%dOutIce(k) = sqrt(immersedHx(j)%volIceCv(k)*4.0/pi/immersedHx(j)%dL+immersedHx(j)%dOutMeltIce(k)**2)
                                 
@@ -1115,7 +1169,9 @@ end subroutine reCalculateMIceFromOutsideMelting
         
         call checkBalances(iceStore,immersedHx)                        
             
-     
+        if(iceStore%itDtTrnsys>=29853) then
+            dummy=1
+        end if 
         do j=1,iceStore%nCv
             if(iceStore%volWater(j)<0.) then            
                 iceStore%storeTotallyFull = 1                 
@@ -1158,8 +1214,8 @@ end subroutine reCalculateMIceFromOutsideMelting
     double precision :: resIceLayer,qSumHx,qFusion, totalArea ! resGlobal
     integer :: iHx, nCv, i, j, nHx, checkAll
     !double precision :: qhx,qacum,qloss,qf,resCv, 
-    double precision :: volIce,volWater, sumArea, volIceHx,qLatentCalc,qAcumIce,qDiff,massIceDiff
-    logical :: avoid=.false.
+    double precision :: volIce,volWater, sumArea, volIceHx,qLatentCalc,qAcumIce,qDiff
+    logical :: debug=.false.
 
     nCv = iceStore%nCv; nHx = iceStore%nHx
 
@@ -1173,14 +1229,16 @@ end subroutine reCalculateMIceFromOutsideMelting
     
     qLatentCalc = (iceStore%iceTotalMass - iceStore%iceTotalMassOld)*iceStore%H_pc/iceStore%dtsec
    
-    iceStore%iceTotalMassFromQLat =  iceStore%iceTotalMassFromQLatOld + (iceStore%sumQIce- iceStore%qFused)/iceStore%H_pc*iceStore%dtsec
-    
     qDiff       = abs(iceStore%sumQIce- iceStore%qFused-qLatentCalc-iceStore%sumQIceAcum)
-    massIceDiff    = iceStore%iceTotalMass-iceStore%iceTotalMassFromQLat !this is cumulative
-    
+   
     if(qDiff>1e-7 .and. iceStore%verboseLevel>=2) then
-        write(iceStore%MyMessage,*) 'Latent heat DtIte=',iceStore%itDtTrnsys,' qIce= ',iceStore%sumQIce,' qFused=',iceStore%qFused,' QLat=',qLatentCalc,' qAcumIce=',iceStore%sumQIceAcum,' qDiff=',qDiff,' MassIceDiff=',massIceDiff,' MassIce=',iceStore%iceTotalMass,' MassIceFromQLat=',iceStore%iceTotalMassFromQLat
-        call messages(-1,trim(iceStore%MyMessage),'NOTICE',iceStore%iUnit,iceStore%iType)       
+        write(iceStore%MyMessage,*) 'Latent heat DtIte=',iceStore%itDtTrnsys,' qIce= ',iceStore%sumQIce,' qFused=',iceStore%qFused,' QLat=',qLatentCalc,' qAcumIce=',iceStore%sumQIceAcum,' qDiff=',qDiff
+        call messages(-1,trim(iceStore%MyMessage),'NOTICE',iceStore%iUnit,iceStore%iType)
+        
+        if(qDiff>1000.) then
+           debug=.true. 
+        endif
+       
     endif      
         
     if(iceStore%imbalance>1) then
@@ -1710,9 +1768,9 @@ subroutine postProcessIte(iceStore,immersedHx)
         
     enddo                             
       
-    !if(iceStore%tStoreAv>immersedHx(1)%tFluidIn) then
-    !    iceStore%sumQIce = 0. 
-    !endif
+    if(iceStore%tStoreAv>immersedHx(1)%tFluidIn) then
+        iceStore%sumQIce = 0. 
+    endif
     
     call calculateMassOfIce(iceStore)             
     

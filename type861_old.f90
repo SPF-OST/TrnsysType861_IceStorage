@@ -6,9 +6,9 @@ subroutine TYPE861
 !                                             /  _ \  / __ \  / ____/  *
 !                                             \ \ \/ / /_/ / / /___    *
 !                                              \ \  / ____/ / ____/    *
-! Institut für                             /\__/ / / /     / /         *
+! Institut fï¿½r                             /\__/ / / /     / /         *
 ! Solartechnik                             \____/ /_/     /_/          *
-! Copyright © 2015                                                     *
+! Copyright ï¿½ 2015                                                     *
 ! @author D.Carbonell                                                  *
 !***********************************************************************
 !
@@ -24,7 +24,7 @@ subroutine TYPE861
 ! TODO 
 !   - Ice sensible capacity should be considered when ice grows. 
 !   - Maximum ice fraction should consider that water moves when ice grows, then only the volume (and not the mass) covered by the hx can be iced
-!   - Now it is simplified from inputs such that rho,ice = rho,water, but a coherent formulation should de done
+!   - Now it is simplified from inputs such that rho,ice = rho,water, but a coherent formulation shuould de done
 !   - This mode can be easily extended to other PCM's
 ! DETECTED PROBLEMS
 !  - In some cases a negative water volume was detected until divergence occurs. This should never happen when the maximum ice fraction is set below 0.9 or so, but it still happens some times.
@@ -32,20 +32,11 @@ subroutine TYPE861
 !  
 ! DIMENSIONS
 !     All calculations inside TYPE861 are done in SI units.
-!
 ! REFERENCE
 ! The use of this model should be referenced as :
-! 
-! for capillary mats formulation and validation
-!
 ! D. Carbonell, M. Battaglia, D. Philippen, M.Y. Haller 
 ! "Numerical and experimental evaluation of ice storages with ice on capillary mat heat exchangers for solar-ice systems"
 ! International Journal of Refrigeration, Volume 88, April 2018, Pages 383-401.
-! 
-! and the following for the flat plate formulation and validation
-! 
-! Carbonell, et al., 2017. Ice-Ex “Heat Exchanger Analyses for Ice Storages in Solar and Heat Pump Applications”. 
-! Institut für Solartechnik for Swiss Federal Office of Energy (SFOE), Research Programme Solar Heat and Heat Storage, CH-3003 Bern.
 ! 
 !***********************************************************************
 !DEC$ATTRIBUTES DLLEXPORT :: TYPE861
@@ -132,7 +123,11 @@ subroutine TYPE861
       if(getIsEndOfTimestep()) then      
                                                                   
         if(iceStore%verboseLevel==4) write (iceStore%myDebugUnit,*) 'DB(ICE):BEGIN IS END OF TIME STEP'
-              
+                 
+        if(iceStore%timeInHours>=6) then
+            iceStore%dummy=1
+        endif 
+        
         call releaseIce(iceStore,immersedHx)
         call reDistributeIce(iceStore)        
         call checkStorageStatus(iceStore,immersedHx)               
@@ -148,11 +143,15 @@ subroutine TYPE861
           write (iceStore%myDebugUnit,*) '========================'
         endif
         
+        !if(iceStore%timeInHours>5842.) then
+        if(immersedHx(1)%mDotAllHxInKgh>10) then
+            !immersedHx(1)%fConstrainedAvg>=0.5
+            iceStore%dummy=0
+        endif
+        
         call setOutputs(iceStore,immersedHx)
         
         iceStore%itDtTrnsys = iceStore%itDtTrnsys+1                                
-        
-        return
         
       endif
  
@@ -215,6 +214,7 @@ subroutine TYPE861
             if(immersedHx(iHx)%numberOfCv>0) then
                 immersedHx(iHx)%isUsed = 1
                 iceStore%nUsedHx = iceStore%nUsedHx+1
+               
             else 
                 immersedHx(iHx)%isUsed = 0
             endif
@@ -286,9 +286,7 @@ subroutine TYPE861
         
         call initializeTempHx(immersedHx,iceStore) !Hx temp = tStorage
         
-        call updateTimeStep(iceStore,immersedHx)    
-        
-        return
+        call updateTimeStep(iceStore,immersedHx)                 
           
       endif
       
@@ -301,7 +299,14 @@ subroutine TYPE861
     !>-----------------------------------------------------------------------
                                                           
       call readInputs(iceStore,immersedHx)
-    
+      
+      if(iceStore%ItDtTrnsys==9126) then
+          iceStore%dummy=1
+      endif
+       
+      if(iceStore%TimeInHours>=8320.233) then
+          iceStore%dummy=1
+      endif
       
       if(errorFound()) return
       
@@ -344,6 +349,15 @@ subroutine TYPE861
         endif
      enddo
     
+     
+     if(iceStore%itTrnsys>=20) then ! This means iteration problems....
+          iceStore%dummy = 0
+     endif
+      
+     if(iceStore%timeInHours>=24.466) then ! This means iteration problems....
+          iceStore%dummy = 0
+     endif
+     
      if(iceStore%verboseLevel==4) then 
           write (iceStore%myDebugUnit,*) '========================'
           write (iceStore%myDebugUnit,*) 'DB(ICE): END OF TYPE 861 ',iceStore%timeInHours
@@ -441,7 +455,7 @@ subroutine setOutputs(iceStore,immersedHx)
     ! Storage timestep internal energy change (due to S!) [W]
     ! iceStore%imbalance = iceStore%sumQHx - iceStore%qAcumStore - iceStore%sumQLoss  - iceStore%qFused + iceStore%sumQIce
     ! iceStore%sumQHx,iceStore%qAcumStore,iceStore%sumQLoss,iceStore%qFused,iceStore%sumQIce,iceStore%imbalance
-        
+      
     call setOutputValue(2,iceStore%sumQHx)
     call setOutputValue(3,iceStore%qAcumStore)
     call setOutputValue(4,iceStore%sumQLoss)
@@ -468,11 +482,15 @@ subroutine setOutputs(iceStore,immersedHx)
         sumIceThick = 0.0d0 ! thickness of ice layer in total [m]
     else        
         sumIceThick = sum(immersedHx(1:iceStore%nHx)%iceThick)       
-    endif   
+    endif
+
+    if(iceStore%timeInHours>=10.0) then
+        nCv = iceStore%nCv
+    endif
     
-    call setOutputValue(9,sumIceThick)
+     call setOutputValue(9,sumIceThick)
      
-    !Total amount of ice  
+    !total amount of ice  
     if(iceStore%iceTotalMass<1e-20) then
         call setOutputValue(10,0.0d0)
     else
@@ -491,11 +509,11 @@ subroutine setOutputs(iceStore,immersedHx)
             enddo
         else    
             
-        !       HX inlet temperature:                                      [°C]
+        !       HX inlet temperature:                                      [ï¿½C]
             call setOutputValue(oInc,immersedHx(i)%tFluidIn); oInc=oInc+1
-        !       HX outlet temperature:                                      [°C]                
+        !       HX outlet temperature:                                      [ï¿½C]                
             call setOutputValue(oInc,immersedHx(i)%tFluidOut); oInc=oInc+1                                               
-        !       HX wall temperature:                                      [°C]
+        !       HX wall temperature:                                      [ï¿½C]
             !call setOutputValue(oInc,immersedHx(i)%tWallAv); oInc=oInc+1
             call setOutputValue(oInc,immersedHx(i)%fConstrainedAvg); oInc=oInc+1
         !!      HX mass flow for all parallel hx: [kg/h]
@@ -715,11 +733,11 @@ subroutine checkParameters(iceStore,immersedHx)
        
    endif
        
-   ! if(iceStore%meltCrit<0.0) then
-   !     write(myMessage,*) 'Critical melting distance =',iceStore%meltCrit,'&
-   !      must be >= 0'
-   !     call messages(-1,trim(myMessage),'fatal',iUnit,iType)                               
-   ! endif
+    if(iceStore%meltCrit<0.0) then
+        write(myMessage,*) 'Critical melting distance =',iceStore%meltCrit,'&
+         must be >= 0'
+        call messages(-1,trim(myMessage),'fatal',iUnit,iType)                               
+    endif
       
     if(iceStore%maxIceFrac<0.0 .or. iceStore%maxIceFrac>=1.0) then
         write(myMessage,*) 'Maximum ice mass fraction =',iceStore%maxIceFrac,'&
@@ -886,7 +904,7 @@ subroutine readInputs(iceStore,immersedHx)
     use iceStoreDef
     use iceStoreFunc
     use hxModule
-    use hxFunc
+    
     use TrnsysFunctions
     use Trnsysconstants
     
@@ -896,8 +914,7 @@ subroutine readInputs(iceStore,immersedHx)
     type(hxStruct), intent(inout),target :: immersedHx(nIHX)
     
     integer :: i, j, iHx, iInc, revertedFlow, iOrigin, oneFlowIsReverted
-    double precision :: areaTop, areaSide, uTop,uSide,areaBot,uBot
-    double precision :: mDotPerPipe
+    double precision :: areaTop, areaSide, uTop,uSide,areaBot,uBot 
     logical :: needToSolveHx
         
     !-----------------------------------------------------------------------
@@ -913,126 +930,71 @@ subroutine readInputs(iceStore,immersedHx)
     
     do iHx=1,iceStore%nHx    
         
+        ! used to check if this was the problem
+        !if(iceStore%itTrnsys<25) then ! This means iteration problems....         
+        !    immersedHx(iHx)%tFluidIn    = getInputValue(iInc) ! HX Inlet temperature [ï¿½C]                                          
+        !endif
         
-            ! used to check if this was the problem
-            !if(iceStore%itTrnsys<25) then ! This means iteration problems....         
-            !    immersedHx(iHx)%tFluidIn    = getInputValue(iInc) ! HX Inlet temperature [°C]                                          
-            !endif
+        immersedHx(iHx)%tFluidInIt = immersedHx(iHx)%tFluidIn
+        immersedHx(iHx)%tFluidIn   = getInputValue(iInc)        
         
-            immersedHx(iHx)%tFluidInIt = immersedHx(iHx)%tFluidIn
-            immersedHx(iHx)%tFluidIn   = getInputValue(iInc)        
-        
-            if(isnan(immersedHx(iHx)%tFluidIn)) then    
-                call FoundBadInput(iInc,'Fatal','Inlet Fluid temperature in the HX is Not a Number (NAN)')                         
-            else if((immersedHx(iHx)%tFluidIn>0 .and. immersedHx(iHx)%tFluidInIt<0.) .or. (immersedHx(iHx)%tFluidIn<0 .and. immersedHx(iHx)%tFluidInIt>0.) ) then      
+        if(isnan(immersedHx(iHx)%tFluidIn)) then    
+            call FoundBadInput(iInc,'Fatal','Inlet Fluid temperature in the HX is Not a Number (NAN)')                         
+        else if((immersedHx(iHx)%tFluidIn>0 .and. immersedHx(iHx)%tFluidInIt<0.) .or. (immersedHx(iHx)%tFluidIn<0 .and. immersedHx(iHx)%tFluidInIt>0.) ) then      
             
-                if(iceStore%verboseLevel>=2 .and. iceStore%itTrnsys>=5) then
-                    write(iceStore%myMessage,*) 'Inlet temperature of heat exchanger = ',iHx,' is switching from positive to negative in ItTrnsys=',iceStore%itTrnsys,' This will make convergence very difficult (if itTrnsys<5 this message is not printed !!)'
-                    call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
-                end if
-            endif   
+            if(iceStore%verboseLevel>=2 .and. iceStore%itTrnsys>=5) then
+                write(iceStore%myMessage,*) 'Inlet temperature of heat exchanger = ',iHx,' is switching from positive to negative in ItTrnsys=',iceStore%itTrnsys,' This will make convergence very difficult (if itTrnsys<5 this message is not printed !!)'
+                call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
+            end if
+        endif   
         
-            immersedHx(iHx)%mDotAllHxInKgh = getInputValue(iInc+1)
-            !immersedHx(iHx)%mDot        = immersedHx(iHx)%mDotAllHxInKgh/(3600d0*immersedHx(iHx)%nParallelHx) ! HX Inlet massflow [kg/h] -> [kg/s]        
+        immersedHx(iHx)%mDotAllHxInKgh = getInputValue(iInc+1)
+        immersedHx(iHx)%mDot        = immersedHx(iHx)%mDotAllHxInKgh/(3600d0*immersedHx(iHx)%nParallelHxDef) ! HX Inlet massflow [kg/h] -> [kg/s]        
+        immersedHx(iHx)%tFluidInRev = getInputValue(iInc+2)                                      ! HX Inlet temperature of reverted flow [ï¿½C]  
         
-            !DC Add this for minimal flow. This is not working yet. 
-            mDotPerPipe = immersedHx(iHx)%mDotAllHxInKgh/(3600d0*immersedHx(iHx)%nParallelHxDef)
-            !mDotPerPipe = immersedHx(iHx)%mDotAllHxInKgh/(3600d0*immersedHx(iHx)%nParallelHx)
+        iInc = iInc+3
         
-            immersedHx(iHx)%nParallelHx = immersedHx(iHx)%nParallelHxDef
-            immersedHx(iHx)%mDot        = mDotPerPipe ! HX Inlet massflow [kg/h] -> [kg/s]
-            immersedHx(iHx)%nTubes = max(immersedHx(iHx)%nParallelHx/iceStore%nRealHx,1)
-               
-       
-           if(abs(mDotPerPipe)>=zeroMassFlowInKgs .and. abs(mDotPerPipe)<=minMassFlowInKgs) then     
-               if(iceStore%verboseLevel>=4) then
-                   write(iceStore%myMessage,*) 'Mass flow in HX = ',immersedHx(iHx)%mDotAllHxInKgh,' kg/h is below a low limit = ',minMassFlowInKgs*3600*immersedHx(iHx)%nParallelHx,' kg/h and above the ZERO limit of ',zeroMassFlowInKgs*3600.*immersedHx(iHx)%nParallelHx
-                   call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
-               endif
-           endif
+        immersedHx(iHx)%zIn  = immersedHx(iHx)%zInDef
+        immersedHx(iHx)%zOut = immersedHx(iHx)%zOutDef
         
-            !if(abs(mDotPerPipe)>=zeroMassFlowInKgs .and. abs(mDotPerPipe)<=minMassFlowInKgs) then
-            !               
-            !    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            !    !THIS IS NOT WORKING AND MUST BE AVOIDED !!!!!!!!!!!!!!!!!!
-            !    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            !    
-            !    if(iceStore%verboseLevel>=1) then
-            !        write(iceStore%myMessage,*) 'Mass flow in HX = ',mDotPerPipe*3600.,' kg/h is below the limit = ',minMassFlowInKgs*3600,' kg/h. number of pipes per heat exchanger will be reduced for calculation. Results should not be affected significantly by doing so'
-            !        call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
-            !    endif
-            !    
-            !    if(mDotPerPipe>0.) then
-            !        immersedHx(iHx)%mDot = minMassFlowInKgs
-            !    else 
-            !        immersedHx(iHx)%mDot = -minMassFlowInKgs !for inverted flow
-            !    endif
-            !    
-            !    immersedHx(iHx)%nParallelHx = max(immersedHx(iHx)%nParallelHxDef*mDotPerPipe/minMassFlowInKgs,1.0)
-            !    immersedHx(iHx)%nTubes = max(immersedHx(iHx)%nParallelHx/iceStore%nRealHx,1)
-            !    
-            !else
-            !    immersedHx(iHx)%nParallelHx = immersedHx(iHx)%nParallelHxDef
-            !    immersedHx(iHx)%mDot        = mDotPerPipe ! HX Inlet massflow [kg/h] -> [kg/s]
-            !    immersedHx(iHx)%nTubes = max(immersedHx(iHx)%nParallelHx/iceStore%nRealHx,1)
-            !endif
-        
-            immersedHx(iHx)%tFluidInRev = getInputValue(iInc+2)                                      ! HX Inlet temperature of reverted flow [°C]  
-        
-            iInc = iInc+3
-        
-            immersedHx(iHx)%zIn  = immersedHx(iHx)%zInDef
-            immersedHx(iHx)%zOut = immersedHx(iHx)%zOutDef
-        
-            revertedFlow = .false.
-        
-            if(abs(immersedHx(iHx)%mDot)<=zeroMassFlowInKgs) then
+        revertedFlow = .false.
+                            
+           
+        if (abs(immersedHx(iHx)%mDot)<zeroMassFlowInKgs) then
+            immersedHx(iHx)%mDot = 0.0            
+            revertedFlow = immersedHx(iHx)%revertedFlow
+        else            
             
-                if(abs(immersedHx(iHx)%mDot)>1e-8) then
-
-                    iceStore%counterMassFlowZero=iceStore%counterMassFlowZeroOld+1
-
-                    if(iceStore%verboseLevel>=1) then
-                        write(iceStore%myMessage,*) 'Mass flow in HX of ',immersedHx(iHx)%mDotAllHxInKgh,' kg/h is below the ZERO limit of  ',zeroMassFlowInKgs*3600.*immersedHx(iHx)%nParallelHx,' kg/h.  Mass flow is assumed to be zero'
-                        call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
-                    endif
-                
-                    if(iceStore%counterMassFlowZero>=100) then
-                        write(iceStore%myMessage,*) 'Mass flow in HX of ',immersedHx(iHx)%mDotAllHxInKgh,' kg/h has been below the ZERO limit of  ',zeroMassFlowInKgs*3600.*immersedHx(iHx)%nParallelHx,' kg/h for 100 TIMES.  Mass flow is assumed to be zero and the counter has been reset to zero. I f you see this warning you shold check the mass flow and the number of pipes assumed ',immersedHx(iHx)%nParallelHx
-                        call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
-                    endif
-                endif
-            
-                immersedHx(iHx)%mDot = 0.0            
-                revertedFlow = immersedHx(iHx)%revertedFlow                
-                
-                !with this capillary mats have imbalance of mass but flat plates not
-                if(immersedHx(iHx)%geometry==PLATE) then
-                    call resetHxToOldTimeStep(immersedHx(iHx)) !DC-21 to avoid problems if mass flow switches from >0  to 0 this generates some mass imbalance in capillary mats. Check why !!!
-                endif
-                                                           
-            else            
-                needToSolveHx = .true.                        
-                if(immersedHx(iHx)%mDot<0.0) then
-                    immersedHx(iHx)%mDot = abs(immersedHx(iHx)%mDot)
-                    revertedFlow = .true.
-                    immersedHx(iHx)%zIn  = immersedHx(iHx)%zOutDef
-                    immersedHx(iHx)%zOut = immersedHx(iHx)%zInDef
-                    immersedHx(iHx)%tFluidIn = immersedHx(iHx)%tFluidInRev
-                endif       
-            endif
-                
-            if(immersedHx(iHx)%zOut>immersedHx(iHx)%zIn) then
-                immersedHx(iHx)%goUp=.true.
-            else
-                immersedHx(iHx)%goUp=.false.
-            endif 
-        
-            if(revertedFlow) oneFlowIsReverted = 1            
-            
-            immersedHx(iHx)%revertedFlow = revertedFlow
+            if(abs(immersedHx(iHx)%mDot)>=zeroMassFlowInKgs .and. abs(immersedHx(iHx)%mDot)<=minMassFlowInKgs) then
                        
+                if(iceStore%verboseLevel>=1) then
+                    write(iceStore%myMessage,*) 'Mass flow in HX = ',immersedHx(iHx)%mDot*3600.,' kg/h is below the limit = ',minMassFlowInKgs*3600,' kg/h. Mass flow will be increased to the lower limit for stable calculation. Results should not be affected significantly by doing so'
+                    call messages(-1,trim(iceStore%myMessage),'warning',iceStore%iUnit,iceStore%iType)
+                endif
+            endif
+            
+            needToSolveHx = .true.                        
+            if(immersedHx(iHx)%mDot<0.0) then
+                immersedHx(iHx)%mDot = abs(immersedHx(iHx)%mDot)
+                revertedFlow = .true.
+                immersedHx(iHx)%zIn  = immersedHx(iHx)%zOutDef
+                immersedHx(iHx)%zOut = immersedHx(iHx)%zInDef
+                immersedHx(iHx)%tFluidIn = immersedHx(iHx)%tFluidInRev
+            endif       
+        endif
         
+        
+                
+        if(immersedHx(iHx)%zOut>immersedHx(iHx)%zIn) then
+            immersedHx(iHx)%goUp=.true.
+        else
+            immersedHx(iHx)%goUp=.false.
+        endif 
+        
+        if(revertedFlow) oneFlowIsReverted = 1            
+            
+        immersedHx(iHx)%revertedFlow = revertedFlow
+                             
     enddo   
                  
    
@@ -1054,7 +1016,7 @@ subroutine readInputs(iceStore,immersedHx)
     iInc    = iInc+1
         
     do i=1,iceStore%nCv
-        iceStore%Tenv(i) = getInputValue(iInc)           ! Temp. of environment        [°C]            
+        iceStore%Tenv(i) = getInputValue(iInc)           ! Temp. of environment        [ï¿½C]            
         iInc    = iInc+1        
     enddo
         
@@ -1092,7 +1054,6 @@ subroutine readParameters(iceStore,immersedHx)
         use iceStoreFunc
         use TrnsysFunctions
         use hxModule
-        use util
     
         implicit none                
         
@@ -1107,7 +1068,7 @@ subroutine readParameters(iceStore,immersedHx)
         
         iceStore%nHx        = 4 ! getParameterValue(1)    !: Number of heat exchangers int[1,4]
         
-        iceStore%verboseLevel = getParameterValue(1)
+        iceStore%verboseLevel    = getParameterValue(1)
         iceStore%VTank      = getParameterValue(2)        !: Tank Volume [m^3]
         iceStore%HTank      = getParameterValue(3)        !: Tank height [m]
         iceStore%WTank      = getParameterValue(4)        !: Tank width [m]
@@ -1130,14 +1091,14 @@ subroutine readParameters(iceStore,immersedHx)
         iceStore%kIce       = getParameterValue(12)     !: Ice therm. cond. [W/m.K]
         
         iceStore%H_pc       = getParameterValue(13)     !: Water<->Ice enthalpy [J/kg]
-        iceStore%TSubcool   = getParameterValue(14)         !: Water<->Ice temperature [°C]
-        iceStore%TFreeze    = getParameterValue(15)         !: Water<->Freezing temperature [°C]
+        iceStore%TSubcool   = getParameterValue(14)         !: Water<->Ice temperature [ï¿½C]
+        iceStore%TFreeze    = getParameterValue(15)         !: Water<->Freezing temperature [ï¿½C]
         iceStore%iceFloatingIni = getParameterValue(16)     !: initial ice kg [kg]
-        !iceStore%meltCrit   = getParameterValue(17)         !: Film critical melting thickness [m] . De-icing Implemented in Type 860
+        iceStore%meltCrit   = getParameterValue(17)         !: Film critical melting thickness [m]
         
-        !if(iceStore%meltCrit>=1.) then
-        !    iceStore%deIceIsPossible=0
-        !endif        
+        if(iceStore%meltCrit>=1.) then
+            iceStore%deIceIsPossible=0
+        endif        
         
         iceStore%maxIceFrac = getParameterValue(18)         !: The maximum ice fraction [%]
         
@@ -1274,9 +1235,10 @@ subroutine readParameters(iceStore,immersedHx)
         iceStore%UlossTop = uAddTop
         iceStore%UlossBot = uAddBot                                  
                             
-        iceStore%order(1:nIHX) = immersedHx(1:nIHX)%orderHx                                     
+        iceStore%order(1:nIHX) = immersedHx(1:nIHX)%orderHx 
         
-        call sortIndex(nIHX,iceStore%order,iceStore%solutionOrderPositiveMDot)
+        !in order to make this code open we need to reprogram this function. 
+        call INDEXX(nIHX,iceStore%order,iceStore%solutionOrderPositiveMDot)                              
         
         iceStore%solutionOrderNegativeMDot(1:nIHX) = nIHX+1
                 

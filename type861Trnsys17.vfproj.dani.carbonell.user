@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioUserFile ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{2ADF5673-A421-4EE8-85D0-258BCC496480}">
+	<Configurations>
+		<Configuration Name="Debug|Win32" Command="C:\Trnsys17\Exe\TRNExe.exe" CommandArguments="C:\Daten\OngoingProject\TRI-HP\Simulations\BigIceExample_v6\bigIceRun-flat_plate_heat_exchangers-Ac128-Vice64-HP24\bigIceRun-flat_plate_heat_exchangers-Ac128-Vice64-HP24.dck"/>
+		<Configuration Name="Release|Win32"/></Configurations></VisualStudioUserFile>

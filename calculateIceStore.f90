@@ -105,17 +105,7 @@
     iIni = 1
     iEnd = nHx
     iInc = 1
-    
-   ! if(iceStore%revertedFlow(1)) then
-   !     iIni = nHx
-   !     iInc = -1
-   !     iEnd = 1
-   ! endif     
-    
-    if(iceStore%ItDtTrnsys>=5172) then
-        iceStore%dummy=1
-    endif
-    
+       
     do while (status==CONTINUE_ITE .and. nIte<=nMaxIter)      
         
         nIte = nIte+1
@@ -419,14 +409,20 @@
     integer, intent(in) :: i 
     double precision :: areaIce,alphaOutHx,qUsedToFuseHx,qUsedToFuseHxMax, kgIceInAllParallelHx,fusedKgIce,&
                         Ra, Nu,lChar,FourVolOverPiL,tUsed,possibleMeltedIce,volOuter,qFusedHxCv,&
-                        volInner, dum, iceMassHxToCvStore
+                        volInner, dum, iceMassHxToCvStore,qHxLatent
     integer :: j,k
            
     tUsed = iceStore%TOld(i)
     iceStore%qFusedHxCv(i) =0.0  
-           
-    if(iceStore%iceMassHxCv(i)>1e-10 .and. tUsed>0.1  .and. iceStore%useAlphaOut==1) then
-        
+    
+    if(iceStore%itDtTrnsys==121) then
+        iceStore%dummy=1
+    endif
+    
+    !qHxLatent = sum(iceStore%qIceCv(1:iceStore%nHx,i)) !It was mentioned to use this but not used. DC-21
+      
+    if(iceStore%iceMassHxCv(i)>1e-10 .and. tUsed>0.1  .and. iceStore%useAlphaOut==1) then 
+         
         ! Melting of ice layer on the hx's !                
         ! write(iceStore%MyMessage,*) 'Melting from outside DtIte=',iceStore%itDtTrnsys,' iCv=',i,' itIceStor=',iceStore%itIceStore,'itStore=',iceStore%itStore,' itTrnsy=',iceStore%itTrnsys                
         ! call Messages(-1,Trim(iceStore%MyMessage),'NOTICE', iceStore%iUnit,iceStore%iType) 
@@ -448,7 +444,7 @@
                             call calculateHeatTransCoefImmersedPlate(0.5*(iceStore%Tfreeze+tUsed),tUsed,iceStore%Tfreeze,immersedHx(j)%Lhx,&
                             alphaOutHx,iceStore%cNuMelting,iceStore%nNuMelting,Ra,Nu,iceStore%iUnit,iceStore%iType)  
                             
-                        else                            
+                        else   !DC-21 maybe safer to use dOutIceOld ?                         
                             ! WE ARE ONLY MELTING THE OUTSIDE ICE LAYER !!                         
                             areaIce = pi*immersedHx(j)%dOutIce(k)*(immersedHx(j)%dL)*immersedHx(j)%factorHxToTank(k,i)*immersedHx(j)%nParallelHx                                                       
                             !lChar   = immersedHx(j)%LHx/immersedHx(j)%numberOfCv
@@ -467,21 +463,25 @@
                         ! The kg melted from existent kg
                         ! kgIceInAllParallelHx = immersedHx(j)%iceMassCv(k)*immersedHx(j)%factorHxToTank(k,i)
                         
-                        if(immersedHx(j)%geometry==COIL) then  
-                            volOuter =  pi*immersedHx(j)%dL*(immersedHx(j)%dOutIce(k)**2-immersedHx(j)%dOutMeltIce(k)**2)/4.0
-                            kgIceInAllParallelHx = volOuter*immersedHx(j)%factorHxToTank(k,i)*immersedHx(j)%nParallelHx*iceStore%rhoIce
+                        if(1) then !only allow to melt what was there the previous time step for stability
+                            if(immersedHx(j)%geometry==COIL) then  
+                                volOuter =  pi*immersedHx(j)%dL*(immersedHx(j)%dOutIceOld(k)**2-immersedHx(j)%dOutMeltIceOld(k)**2)/4.0
+                                kgIceInAllParallelHx = volOuter*immersedHx(j)%factorHxToTank(k,i)*immersedHx(j)%nParallelHx*iceStore%rhoIce
+                            else
+                                kgIceInAllParallelHx = immersedHx(j)%iceThickCvOld(k)*immersedHx(j)%areaIceUsed(k)*immersedHx(j)%factorHxToTank(k,i)*iceStore%rhoIce                                
+                            endif                                                
                         else
-                            kgIceInAllParallelHx = immersedHx(j)%iceThickCv(k)*immersedHx(j)%areaIceUsed(k)*immersedHx(j)%factorHxToTank(k,i)*iceStore%rhoIce
-                        endif                                                
-                                                                                                                             
-                        possibleMeltedIce = max(qUsedToFuseHx*iceStore%dtsec/iceStore%H_pc,0.0)                            
-                        fusedKgIce = min(possibleMeltedIce,kgIceInAllParallelHx)  ! W*s/J/kg = kg   
-                        
-                        if(kgIceInAllParallelHx > possibleMeltedIce) then
-                            !limited !!!
-                            iceStore%dummy=1
+                            if(immersedHx(j)%geometry==COIL) then  
+                                volOuter =  pi*immersedHx(j)%dL*(immersedHx(j)%dOutIce(k)**2-immersedHx(j)%dOutMeltIce(k)**2)/4.0
+                                kgIceInAllParallelHx = volOuter*immersedHx(j)%factorHxToTank(k,i)*immersedHx(j)%nParallelHx*iceStore%rhoIce
+                            else
+                                kgIceInAllParallelHx = immersedHx(j)%iceThickCv(k)*immersedHx(j)%areaIceUsed(k)*immersedHx(j)%factorHxToTank(k,i)*iceStore%rhoIce
+                            endif 
                         endif
-                                              
+                        
+                        possibleMeltedIce = max(qUsedToFuseHx*iceStore%dtsec/iceStore%H_pc,0.0)                            
+                        fusedKgIce = min(possibleMeltedIce,kgIceInAllParallelHx)  ! W*s/J/kg = kg                                                                               
+                        
                         ! Real fusion heat considering all hx's
                         
                         iceStore%qFusedHxCv(i) = iceStore%qFusedHxCv(i) + fusedKgIce * iceStore%H_pc / iceStore%dtsec                                                        
