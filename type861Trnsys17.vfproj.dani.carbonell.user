@@ -2,4 +2,4 @@
 <VisualStudioUserFile ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{2ADF5673-A421-4EE8-85D0-258BCC496480}">
 	<Configurations>
 		<Configuration Name="Debug|Win32" Command="C:\Trnsys17\Exe\TRNExe.exe" CommandArguments="C:\Daten\OngoingProject\TRI-HP\Simulations\BigIceExample_v6\bigIceRun-flat_plate_heat_exchangers-Ac128-Vice64-HP24\bigIceRun-flat_plate_heat_exchangers-Ac128-Vice64-HP24.dck"/>
-		<Configuration Name="Release|Win32"/></Configurations></VisualStudioUserFile>
+		<Configuration Name="Release|Win32" Command="C:\Trnsys17\Exe\TRNExe.exe" CommandArguments="C:\Daten\OngoingProject\TRI-HP\Simulations\SolarIceSlurry_new\SlurryRun-CitySMA_dryNAc2.0x48.348Vice1.0x48.348PvArea4.5x48.348HP1.0x35.526\SlurryRun-CitySMA_dryNAc2.0x48.348Vice1.0x48.348PvArea4.5x48.348HP1.0x35.526.dck"/></Configurations></VisualStudioUserFile>

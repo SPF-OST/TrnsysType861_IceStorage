@@ -1,0 +1,3912 @@
+#ESI!
+4.0
+Icestorage
+0
+
+Tsharma
+UAS-Hof
+1
+
+2
+2
+September 05, 2019
+Tsharma
+September 05, 2019
+1
+
+noowner
+__
+__
+__
+1
+Stratification storage tank without direct ports. 4 immersed heat exchangers. heat exchangers can form ice. Heat exchangers can be of plate type or coil type.
+0
+0
+0
+0
+0
+0
+__
+__
+__
+1
+
+0
+__
+__
+__
+__
+0
+0
+__
+.\SourceCode\Types\type861.f90
+__
+__
+__
+248
+notused
+SN
+1
+No of heat exchangers
+simple
+integer
+3
++
+1
+4
+[ ; ]
+2
+0
+-
+Dimensionless
+VIceS
+SN
+1
+Storage volume
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m^3
+Volume
+Tankheight
+SN
+1
+Tank height
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+Tankwidth
+SN
+2
+Tank width
+
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+Stype
+SN
+1
+0: box or 1 : cylinder
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+xbetweenHX
+SN
+1
+Distance between HX
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+ybetweenHX
+SN
+1
+distance bw HX along y
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+lamdaEff
+SN
+2
+Effective thermal conductivity of storage
+
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m.K
+Thermal Conductivity
+rhowat
+SN
+1
+Water density
+simple
+string
+3
++
+700
++Inf
+[ ; ]
+1000
+0
+kg/m^3
+Density
+CPWAT_SI
+SN
+1
+Specific heat storage fluid
+simple
+string
+3
++
+3800
++Inf
+[ ; ]
+4000
+0
+J/kg.K
+Specific Heat
+rhoIce
+SN
+1
+Ice density
+simple
+string
+3
++
+700
++Inf
+[ ; ]
+981
+0
+kg/m^3
+Density
+lambdaIce
+SN
+1
+Tank ice thermal cond
+simple
+string
+3
++
+0.5
+3
+[ ; ]
+1
+0
+W/m.K
+Thermal Conductivity
+hFusion
+SN
+1
+Water<->Ice enthalpy
+simple
+string
+3
++
+3.0e5
++Inf
+[ ; ]
+3.0e5
+0
+J/kg
+Specific Energy
+TSbucool
+SN
+1
+Water-ice temp
+simple
+string
+3
++
+-Inf
+1
+[ ; ]
+0
+0
+C
+Temperature
+TFreeze
+SN
+1
+Freezing temperature
+simple
+string
+3
++
+0
+5
+[ ; ]
+0
+0
+C
+Temperature
+iceBlockIni
+SN
+1
+Initial amount of ice in store
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+kg
+Mass
+iceThickToDeIce
+SN
+1
+Film critical melting thickness
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+maxIceFrac
+SN
+1
+maximum storage ice fraction
+simple
+string
+3
++
+0
+1
+[ ; ]
+0.99
+0
+-
+Dimensionless
+parcheck
+SN
+1
+parameter check: 0 allows all parameters and 1 interrpts simulation
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+serialMode
+SN
+1
+0 in parallel so we need mdot for all HX, 1 in series so we meed mdot just for one
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+heightIcehx
+SN
+1
+Height of iceable heat exc
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+maxIceFracIceLayer
+SN
+1
+max Ice floating ratio in layers where ice produced ( only rel when deicing is used)
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+useTwallOld
+SN
+1
+Use of twall from previous time step (impoves convergence)
+simple
+real
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+notused
+SN
+1
+No of used HX ( only when hx type =1 cap mats)
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+PhysicalPropConst
+SN
+1
+Use constant physical properties in the water from storage
+simple
+integer
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+useCorrugatedPlate
+SN
+1
+use corrugated plates or not ( 0 or 1)
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+hxGeometry
+SN
+1
+0 : fp 1 : spiral tube hx
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+NHx1
+SN
+1
+Number of heat exchangers in parallel
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+HHx
+SN
+1
+Heat exchanger height for fp and inner tube dia for coil type
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+WHx
+SN
+1
+width of flat palet or outer tube dia for coil type
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+lHx
+SN
+1
+length of hx
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+dxWallHx
+SN
+1
+Heat exchanger wall thickness for flat plate and additional heat capacity for coil
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+order
+SN
+1
+Order of HX from 1 to 4 used only if series mode is active
+simple
+integer
+3
++
+1
+4
+[ ; ]
+1
+0
+-
+Dimensionless
+lambdaHx
+SN
+1
+wall thermal conductivity
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m.K
+Thermal Conductivity
+HxIceIn
+SN
+1
+height of hx on the inlet
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+HxIceOut
+SN
+1
+height of hx on the outlet
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+RHOBRI
+SN
+1
+Heta exchanger fluid density
+simple
+string
+3
++
+500
++Inf
+[ ; ]
+500
+0
+kg/m^3
+Density
+CPBRI_SI
+SN
+1
+HX fluid specific heat
+simple
+string
+3
++
+3000
++Inf
+[ ; ]
+3000
+0
+J/kg.K
+Specific Heat
+glyconc
+SN
+1
+Glycol concentration
+simple
+string
+3
++
+0
+100
+[ ; ]
+30
+0
+-
+Dimensionless
+numberOfHxCv
+SN
+1
+Number of CV in HX
+simple
+real
+3
++
+0
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceHeat
+SN
+1
+c factor for nusselt correlation in heating
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceHeat
+SN
+1
+n factor for nusselt correlation in heating
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceCool
+SN
+1
+C factor for nusselt correlation in cooling
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceCool
+SN
+1
+n factor for nusselt correlation in cooling
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nEnhanceNu
+SN
+1
+enhanced nusselt number for laminar flow
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+hxGeometry
+SN
+1
+0 flate plate, 1 spiral tube hx
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+NHx1
+SN
+1
+Number of heat exchangers in parallel
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+HHx
+SN
+1
+Heat exchanger wall thickness
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+WHx
+SN
+1
+width of flat plate or outer tube dia for coil
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+lHx
+SN
+1
+Length of heat exch
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+dxWallHx
+SN
+1
+hx wall thickness or additional heat capacity for coil
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+order
+SN
+1
+Order of hx from 1 to 4 only if series mode is active
+simple
+integer
+3
++
+1
+4
+[ ; ]
+1
+0
+-
+Dimensionless
+lambdaHx
+SN
+1
+HX wall thermal cond.
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m.K
+Thermal Conductivity
+HxIceIn
+SN
+1
+height of inlet in HX
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+HxIceOut
+SN
+1
+Height of output on hx
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+RHOBRI
+SN
+1
+Heat exchanger fluid density
+simple
+string
+3
++
+500
++Inf
+[ ; ]
+500
+0
+kg/m^3
+Density
+CPBRI_SI
+SN
+1
+HX fluid specific heat
+simple
+string
+3
++
+3000
++Inf
+[ ; ]
+3000
+0
+J/kg.K
+Specific Heat
+Glyconc
+SN
+1
+Glycol concentration
+simple
+string
+3
++
+1
+100
+[ ; ]
+30
+0
+-
+Dimensionless
+numberOfHxCv
+SN
+1
+Number of CV
+simple
+integer
+3
++
+0
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceHeat
+SN
+1
+C factor for nuselt correlation in heating
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceHeat
+SN
+1
+n factor for nusslet heating
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceCool
+SN
+1
+cUserDefined COOLING if we set to 0 Churchill equation is employed
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceCool
+SN
+1
+nUserDefined COOLING if we set to 0 Churchill equation is employed
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nEnhanceNu
+SN
+1
+Increase Nu
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+hxGeometry
+SN
+1
+0 flate plate, 1 spiral tube hx
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+NHx1
+SN
+1
+Number of heat exchangers in parallel
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+HHx
+SN
+1
+Height of inlet on HX or inner tube dia
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+WHx
+SN
+1
+Width of HX flat plate or outer tube dia for coil
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+lHx
+SN
+1
+length of hx
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+dxWallHx
+SN
+1
+Wall thickness of flat plate or additional heat capacity of HX
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+Order
+SN
+1
+Order of HX if series mode is active
+simple
+real
+3
++
+1
+4
+[ ; ]
+1
+0
+-
+Dimensionless
+lambdaHx
+SN
+1
+HX wall thermal cond
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/m.K
+Thermal Conductivity
+HxIceIn
+SN
+1
+Relative Height of heat exchanger inlet
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+HxIceOut
+SN
+1
+Height of outlet on HX
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+RHOBRI
+SN
+1
+Heat exchanger fluid density
+simple
+string
+3
++
+500
++Inf
+[ ; ]
+500
+0
+kg/m^3
+Density
+CPBRI_SI
+SN
+1
+HX fluid specific heat
+simple
+string
+3
++
+3000
++Inf
+[ ; ]
+3000
+0
+J/kg.K
+Specific Heat
+Glyconc
+SN
+1
+Glycol concentration
+simple
+string
+3
++
+1
+100
+[ ; ]
+30
+0
+-
+Dimensionless
+numberOfHxCv
+SN
+1
+Number of HX CV
+simple
+real
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceHeat
+SN
+1
+cUserDefined HEATING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceHeat
+SN
+1
+nUserDefined HEATING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceCool
+SN
+1
+cUserDefined COOLING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceCool
+SN
+1
+nUserDefined COOLING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nEnhanceNu
+SN
+1
+Increase Nu
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+hxGeometry
+SN
+1
+0 flate plate, 1 spiral tube hx
+simple
+string
+3
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+NHx1
+SN
+1
+Number of heat exchangers in parallel
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+HHx
+SN
+1
+height of flat plate or inner tube dia
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+WHx
+SN
+1
+Width of plate or outer tube dia
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+lHx
+SN
+1
+Length of hx
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+dxWallHx
+SN
+1
+Wall thickness of flat plate or additional heat cap for coil
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+Order
+SN
+1
+Order of HX from 1 to 4 only if series mode is active
+simple
+real
+3
++
+1
+4
+[ ; ]
+1
+0
+-
+Dimensionless
+lambdaHx
+SN
+1
+HX wall thermal cond
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/m.K
+Thermal Conductivity
+HxIceIn
+SN
+1
+height of inlet on hx
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+HxIceOut
+SN
+1
+Height of outlet on HX
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+RHOBRI
+SN
+1
+HX fluid density
+simple
+string
+3
++
+500
++Inf
+[ ; ]
+500
+0
+kg/m^3
+Density
+CPBRI_SI
+SN
+1
+Specific heat of HX fluid
+simple
+string
+3
++
+3000
++Inf
+[ ; ]
+3000
+0
+J/kg.K
+Specific Heat
+Glyconc
+SN
+1
+Glycol concentration
+simple
+string
+3
++
+0
+100
+[ ; ]
+30
+0
+-
+Dimensionless
+numberOfHxCv
+SN
+1
+Number of CV
+simple
+real
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceHeat
+SN
+1
+cUserDefined HEATING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceHeat
+SN
+1
+nUserDefined HEATING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+CIceCool
+SN
+1
+cUserDefined COOLING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nIceCool
+SN
+1
+nUserDefined COOLING
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+nEnhanceNu
+SN
+1
+Increase Nu
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+USideBot
+SN
+1
+U lower lateral side
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+USideTop
+SN
+1
+U upper lateral side
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+UBot
+SN
+1
+U bottom sdie
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+UTop
+SN
+1
+U upper side
+simple
+string
+3
++
+0
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+zSensorPcm1
+SN
+1
+1st sensor height position
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+zSensorPcm2
+SN
+1
+2nd sensor height position
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+zsensorPcm3
+SN
+1
+3rd sensor height position
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+zSensorPcm4
+SN
+1
+4th sensor height position
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+zSensorPcm5
+SN
+1
+5th sensor height position
+simple
+string
+3
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+TCsHx1i
+SN
+1
+Inlet temperature HX-1
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+MfrCsHx1i
+SN
+1
+Inlet flowrate HX-1
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+kg/hr
+Flow Rate
+TCsHx1iRev
+SN
+1
+reverted (m<0) Inlet temperature HX-1
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TCsHx2i
+SN
+1
+Inlet temperature HX-2
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+MfrCsHx2i
+SN
+1
+Inlet flowrate HX-2
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+kg/hr
+Flow Rate
+TCsHx2iRev
+SN
+1
+reverted (m<0) Inlet temperature HX-2
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TCsHx3i
+SN
+1
+Inlet temperature HX-3
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+MfrCsHx3i
+SN
+1
+Inlet flowrate HX-3
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+kg/hr
+Flow Rate
+TCsHx3iRev
+SN
+1
+reverted (m<0) Inlet temperature HX-3
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TCsHx4i
+SN
+1
+Inlet temperature HX-4
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+MfrCsHx4i
+SN
+1
+Inlet flowrate HX-4
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+kg/hr
+Flow Rate
+TCsHx4iRev
+SN
+1
+Reverted (m<0) Inlet temperature HX-4
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+mechanicalDeIce
+SN
+1
+mechanical DeICe : 0 off 1 on
+simple
+integer
+1
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Amb temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambinet temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Amb temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambinet temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambinet temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient temp
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb
+SN
+1
+Ambient below TES
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tamb 
+SN
+1
+Ambient above TES
+simple
+real
+1
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM1     
+SN
+1
+Initial temperature of node-1
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM2
+SN
+1
+Initial temperature of node-3
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM3     
+SN
+1
+Initial temperature of node-5
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM4     
+SN
+1
+Initial temperature of node-7
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM5     
+SN
+1
+ Initial temperature of node-9
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM6     
+SN
+1
+Initial temperature of node-11
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM7     
+SN
+1
+Initial temperature of node-13
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM8     
+SN
+1
+Initial temperature of node-15
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM9     
+SN
+1
+Initial temperature of node-17
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM10    
+SN
+1
+Initial temperature of node-19
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM11     
+SN
+1
+Initial temperature of node-1
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM12      
+SN
+1
+Initial temperature of node-3
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM13     
+SN
+1
+Initial temperature of node-5
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM14     
+SN
+1
+Initial temperature of node-7
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM15     
+SN
+1
+ Initial temperature of node-9
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM16     
+SN
+1
+Initial temperature of node-11
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM17     
+SN
+1
+Initial temperature of node-13
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM18     
+SN
+1
+Initial temperature of node-15
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM19     
+SN
+1
+Initial temperature of node-17
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TiniPCM20    
+SN
+1
+Initial temperature of node-19
+simple
+real
+5
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+TAvgPCM 
+SN
+1
+Avg storage temp
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+sumQHX
+SN
+1
+Total heat provided by HX to storage
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+qAcumStore
+SN
+1
+Accumulated heat for a time step
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+sumQLoss
+SN
+1
+Sum of heat loss for total HX
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+qFused
+SN
+1
+Total heat used to melt the ice
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+sumQIce
+SN
+1
+total heat to ice the HX
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+Imbalance
+SN
+1
+Heat balance in the HX balance = qUtil + qAcum + qHxToTnk
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+iceFloat
+SN
+1
+Amount of ice floating in storage tank [kg]
+simple
+real
+2
++
+0
++Inf
+[ ; ]
+0
+0
+kg
+Mass
+SumIceThick
+SN
+1
+Sum of ice thickness of all the HX in m
+simple
+real
+2
++
+0
++Inf
+[ ; ]
+0
+0
+m
+Length
+iceTotalMass
+SN
+1
+Total amount of ice in kg
+simple
+real
+2
++
+0
++inf
+[ ; ]
+0
+0
+kg
+Mass
+storeFull
+SN
+1
+Storage is full with ice to the limit set by user
+simple
+integer
+2
++
+0
+1
+[ ; ]
+0
+0
+-
+Dimensionless
+tFluidIn
+SN
+1
+HX Inlet temp
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+tFluidout
+SN
+1
+HX outlet temp
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+fConstrainedAvg
+SN
+1
+f value
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+qUtil
+SN
+1
+Total usefull heat in the fluid (>0 (cooling storage) Tout > Tin)
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+IceThick
+SN
+1
+Ice thickness of all parallel HX  / dOutIce in case of pipe
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+Icethickmelt
+SN
+2
+melted layer in the heat exchanger / doutmeltice in case of pipe
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+UA
+SN
+1
+UA of all HX including all parallel
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/K
+Overall Loss Coefficient
+tFluidIn
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+tFluidout
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+fConstrainedAvg
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+qUtil
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+IceThick
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+Icethickmelt
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+UA
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/K
+Overall Loss Coefficient
+tFluidIn
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+tFluidout
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+fConstrainedAvg
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+qUtil
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+IceThick
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+Icethickmelt
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+UA
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/K
+Overall Loss Coefficient
+tFluidIn
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+tFluidout
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+fConstrainedAvg
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+-
+Dimensionless
+qUtil
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+IceThick
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+Icethickmelt
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+m
+Length
+UA
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/K
+Overall Loss Coefficient
+storeTotallyFull
+SN
+1
+Ice store is at the set max capacity and HX stops working in icing mode
+simple
+integer
+2
++
+0
+1
+[ ; ]
+0
+0
+C
+Temperature
+Tsensor1
+SN
+1
+Temp sensor 1
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tsensor2
+SN
+1
+Temp sensor 2
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tsensor3
+SN
+2
+Temp sensor 3
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tsensor4
+SN
+1
+Temp sensor 4
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tsensor5
+SN
+1
+Temperature sensor 5
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tzo1
+SN
+1
+5 % rel position temp
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz02
+SN
+1
+10 % relative height
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz03
+SN
+1
+20 % relative height
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz04 
+SN
+2
+30 % relative position
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz05
+SN
+1
+40 % relative position
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz06
+SN
+1
+50 % relative position
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz07
+SN
+1
+60 % relative position
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz08
+SN
+1
+70 % relative position
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz09
+SN
+1
+80 % relative position
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tz10
+SN
+1
+95 % relative height
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+qLossBot
+SN
+1
+Bottom heat loss
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV1
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV2
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV3
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV4
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV5
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss Cv6
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV7
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV8
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV9
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV10
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV11
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV12
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV13
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV14
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV15
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV16
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV17
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV18
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV19
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+myQloss CV20
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+qLossTop
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W
+Power
+Tenv top
+SN
+1
+Environment temperature
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+Tenv bot
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+C
+Temperature
+ULossBot
+SN
+1
+U additional bottom
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+USideAv
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+ULossTop
+SN
+1
+
+simple
+real
+2
++
+-Inf
++Inf
+[ ; ]
+0
+0
+W/m^2.K
+Heat Transfer Coeff.
+0
+0
+0
+0
+0
+
+*** trnModel specific properties ***
+100
+861
+
+9
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+
+
+
+0
+9
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+
+
+
+0
+
+
+0
+1
+Ice storage
+0
+34
+0
+
+
+1
+100
+0
+81
+0
+
+
+1
+100
+0
+110
+0
+
+
+1
+100
+0
+19
+0
+
+
+1
+100
