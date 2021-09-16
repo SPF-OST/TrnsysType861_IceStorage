@@ -50,7 +50,8 @@
 \reportName{TRNSYS Type~861 }
 \reportSubName{Ice Storage Model with ice-on-heat exchangers}
 
-\reportDate{21$^{st}$ October of 2018} % or writte the date manually 
+%\reportDate{21$^{st}$ October of 2018} % or writte the date manually 
+\reportDate{Last update : \today} % or writte the date manually 
 \author{Dr. Daniel Carbonell}
 \address{Dani.Carbonell@spf.ch}
 
@@ -71,8 +72,9 @@ The mathematical formulation of this model has been presented in \citet{carbonel
 
   \begin{tabular}{|p{40mm}|p{15mm}|p{101mm}|}\hline    
     \textbf{Date} & \textbf{Version} & \textbf{Changes}  \\\hline
+     Sep 16, 2021 & v1.1 & update on documentation only \\\hline    
+     Jul 14, 2020 & v1.1 & Small clarificatons in the documentation \\\hline    
      Oct 31, 2018 & v1.0 & First version released \\\hline
-     Jul 14, 2020 & v1.1 & Small clarificatons in the documentation \\\hline
   \end{tabular}
 
 \section{Notes}
@@ -94,14 +96,15 @@ The mathematical formulation of this model has been presented in \citet{carbonel
 \textbf{Nr.} & \textbf{Description} & \textbf{Name}& \textbf{Units} \\
 \hline
 
- 1 & unused &  & -  \\
+ 1 & information level &  0: no messages, 1: only important,&  \\
+ & & 3: all, 4: debug mode& -  \\
   2 & Storage Volume & \si{V_{tes}} & \si{m^3}  \\
   3 & Storage height & \si{H_{tes}} & m  \\
   4 & Storage width & \si{W_{tes}} & m  \\
   5 & Storage geometry & \si{s_{type}} & - \\    
      &   0: box 1:cylinder (\si{W_{tes}} not used) &&\\
   6 & Distance between pipes if \si{hx_{type}} = 1 & \si{x_1} & m \\
-     & Distance beween hx if \si{hx_{type}} = 2 & & \\
+     & Distance between hx if \si{hx_{type}} = 2 & & \\
   7 & Distance between hx if \si{hx_{type}} = 1 & \si{x_2} & -  \\
   8 & Effective thermal conductivity of store & \si{k_{wat}} & \si{W/(mK)}  \\
   9 & Density of storage fluid (water) & \si{$\rho_{wat}$} & \si{kg/m^3}  \\
@@ -109,22 +112,21 @@ The mathematical formulation of this model has been presented in \citet{carbonel
 %  11 & Density ice & \si{$\rho_{ice}$} & \si{kg/m^3}  \\
 11 &not used &  &  \\
   12 & Thermal conductivity of ice & \si{k_{ice}} & \si{W/(mk)}  \\
-  13 & Water$\leftrightarrow$ice enthalpy & \si{$\Delta$H_{ice}} &        \si{kJ/kg}  \\
-  14 & Subcooling temp & \si{T_{subcool}} & \si{\degreeCelsius} \\
+  13 & Water$\leftrightarrow$ice enthalpy & \si{$\Delta$H_{ice}} &        \si{J/kg}  \\
+  14 & Supercooling temp & \si{T_{supercool}} & \si{\degreeCelsius} \\
   15 & Freezing temperature & \si{T_{freeze}} &\si{\degreeCelsius} \\
   16 & Initial amount of ice in store & \si{kg_{ice}} & kg \\
 %  17 & Critical film melting thickness & \si{$\delta$_{melt}} & m \\
 17 & not used & & \\
   18 & Maximum storage ice volume fraction & \si{$V_{ice,max}$} & - \\
-  19 & Parameter check control &&\\
-       &  1 : interrups simulation if parameters out of range && \\
-20 & unused &&\\
- 21 & hx height respect to the total ([0-1])& \si{hx_{height}} & m\\ 
+  19 & Parameter check control &  1 : breaks if pars out of range & \\
+20 & not used & &\\
+ 21 & hx height respect to the total & \si{hx_{height}}  [0-1]& - \\ 
  22 & maximum ice floating ratio in layers were ice is produced (only relevant when deicing is used) & &\\
  23 & Use of \si{T_{wall}} from previous time step (improves convergence) & &m\\
- 24 & Number fo used hx (only used for \si{hx_{type}}=1 (capillary mats) &&\\
- 25 & use constabnt physical properties in the water from the storage && \\
- 26 & use corrugated configuration for flat plates (only used when \si{hx_{type}}=2 &&\\
+ 24 & Number of used hx  & only used for \si{hx_{type}} =1 &\\
+ 25 & use constant physical properties in the water from the storage && \\
+ 26 & use corrugated configuration for flat plates  & only used when \si{hx_{type}}=0 &\\
  \multicolumn{4}{c}{\small -- continued on next page --} \\
 \end{tabular}
 
@@ -135,40 +137,41 @@ The mathematical formulation of this model has been presented in \citet{carbonel
 %%%%%%%%%HEAT EXCHANGER
      & \textbf{Heat Exchanger i:} & & \\
   \small{ 27 + 19\footnote{i=1,4 which is the maximum number of heat exchangers}(i-1) } &Hx geometry & \si{hx_{type}}& \\  
-   &0=flat plates, 1=capilary mats,2=coils &&\\
+   &0=flat plates, 1=capillary mats or coils &&\\
   \small{ 28 + 19(i-1)}& Number of hx & \si{N_{hx}} & \\  
-  \small{ 29 + 19(i-1)}& \si{hx_{type}}=0  inner tube diameter & \si{d_{in,hx}} & \\  
-                           & \si{hx_{type}}=1 height flat plate & \si{H_{hx}}& \\  
-  \small{ 30 + 19(i-1)}& \si{hx_{type}}=0 outer tube diameter &\si{d_{out,hx}}& \\  
-                           & \si{hx_{type}}=1  width of flat plate &\si{W_{hx}}& \\  
-  \small{ 31 + 19(i-1)}& Lenght of hx  & \si{L_{hx}} & \\  
+  \small{ 29 + 19(i-1)}& \si{hx_{type}}=1  inner tube diameter & \si{d_{in,hx}} & \\  
+                           & \si{hx_{type}}=0 height flat plate & \si{H_{hx}}& \\  
+  \small{ 30 + 19(i-1)}& \si{hx_{type}}=1 outer tube diameter &\si{d_{out,hx}}& \\  
+                           & \si{hx_{type}}=0  width of flat plate &\si{W_{hx}}& \\  
+  \small{ 31 + 19(i-1)}& Length of hx  & \si{L_{hx}} & \\  
   \small{ 32 + 19(i-1)}& \si{hx_{type}}=0  additional heat capacity hx & & \si{J/m^3} \\  
                            & \si{hx_{type}}=1  wall thickness flat plate &\si{dx_{wall,hx}} & m \\  
-  \small{33+19(i-1)}& Order of hx from 1 to 4. Used only if seriesMode is active  &  & \\  
+  \small{33+19(i-1)}& Order of hx from 1 to 4. Used only if seriesMode is active  & not implemented & \\  
   \small{34+19(i-1)}& Hx thermal conductivity  & \si{$\lambda$_{hx,i}} & \si{W/(mK)}\\
-  \small{35+19(i-1)}& Relative height of inlet on the hx & [0-1] & m \\
-   \small{36+19(i-1)}& Relative height of outlet on the hx & [0-1] & m \\
+  \small{35+19(i-1)}& Relative height of inlet on the hx & [0-1] &  \\
+   \small{36+19(i-1)}& Relative height of outlet on the hx & [0-1] &  \\
  
-   \small{37+19(i-1)}& Fluid thermal conductivity & \si{$\lambda$_{p,i}} & W/(mK) \\
-   \small{38+19(i-1)}& Fluid specific heat & \si{c_{p,i}} & J/(kgK) \\
+   \small{37+19(i-1)}& Fluid density & \si{$\rho$_{fluid}} & \si{kg/(m^3)} \\
+   \small{38+19(i-1)}& Fluid specific heat & \si{c_{p,fluid}} & J/(kgK) \\
    
    \small{39+19(i-1)}  & Glycol concentration &  &  \%\\
-    \small{40+19(i-1)}  & C Factor for  Nusselt correlation (heating)  &  \si{C_{hx,i}} & \\
-    \small{41+19(i-1)}  & n Factor  for  Nusselt correlation (heating) &  \si{n_{hx,i}} & \\
-     \small{42+19(i-1)}  & C Factor  for  Nusselt correlation (cooling)  &  \si{C_{hx,i}} & \\
-     \small{43+19(i-1)}  & n Factor  for Nusselt correlation (cooling) &  \si{n_{hx,i}} & \\
-\small{44+19(i-1)} & Enhanced Nusselt number for laminar flow (\si{Nu = Nu$\cdot$ Nu_{en}}) & \si{Nu_{en}} & - \\
+       \small{40+19(i-1)}  & Number of Cv in the Hx  &  \si{N_{cv,hx}} &  \\
+    \small{41+19(i-1)}  & C Factor for  Nusselt correlation (heating)  &  \si{C_{hx,i}} & \\
+    \small{42+19(i-1)}  & n Factor  for  Nusselt correlation (heating) &  \si{n_{hx,i}} & \\
+     \small{43+19(i-1)}  & C Factor  for  Nusselt correlation (cooling)  &  \si{C_{hx,i}} & \\
+     \small{44+19(i-1)}  & n Factor  for Nusselt correlation (cooling) &  \si{n_{hx,i}} & \\
+\small{45+19(i-1)} & Enhanced Nusselt number for laminar flow (\si{Nu = Nu$\cdot$ Nu_{en}}) & \si{Nu_{en}} & - \\
       & \textbf{End of Heat Exchanger } & & \\
       \hline                                            
-104 & U lower lateral side   & \si{U_{low,lat}} & \si{W/(m^2K)}\\
-105 &  U upper lateral side   & \si{U_{up,lat}} &  \si{W/(m^2K)}\\
-106 & U bottom side   & \si{U_{bot}} &  \si{W/(m^2K)}\\
-107 & U upper side   & \si{U_{top}} &  \si{W/(m^2K)}\\
-108 & $1^{th}$ sensor height position  & \si{y_{s1}} & m\\
-109 & $2^{th}$ sensor height position  & \si{y_{s2}} & m\\
-110 & $3^{th}$ sensor height position  & \si{y_{s3}} & m\\
-111 & $4^{th}$ sensor height position  & \si{y_{s4}} & m\\
-112 & $5^{th}$ sensor height position  & \si{y_{s5}} & m\\
+103 & U lower lateral side   & \si{U_{low,lat}} & \si{W/(m^2K)}\\
+104 &  U upper lateral side   & \si{U_{up,lat}} &  \si{W/(m^2K)}\\
+105 & U bottom side   & \si{U_{bot}} &  \si{W/(m^2K)}\\
+106 & U upper side   & \si{U_{top}} &  \si{W/(m^2K)}\\
+107 & \si{$1^{th}$} relative sensor height position  & \si{y_{s1}} [0-1] & \\
+108 & \si{$2^{th}$} relative  sensor height position  & \si{y_{s2}} [0-1]& \\
+109 & \si{$3^{th}$} relative sensor height position  & \si{y_{s3}} [0-1]& \\
+110 & \si{$4^{th}$} relative sensor height position  & \si{y_{s4}} [0-1]& \\
+111 & \si{$5^{th}$} relative sensor height position  & \si{y_{s5}} [0-1]& \\
 \hline
 
 \end{tabular}
