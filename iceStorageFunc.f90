@@ -28,7 +28,7 @@
 
     subroutine calculateGeo(iceStore,immersedHx)
 
-    use spfGlobalConst
+    use spfGlobalConst, only: PI
     use iceStoreConst
     use iceStoreDef
     use hxModule
@@ -227,7 +227,7 @@
 
 subroutine initializeMassOfIce(iceStore,immersedHx)
 
-    use spfGlobalConst
+    use spfGlobalConst, only: PI
     use iceStoreConst
     use iceStoreDef
     use hxModule
@@ -954,7 +954,8 @@ end subroutine calculateQFromHxToStorage
 
 
 subroutine reCalculateMIceFromOutsideMelting(iceStore,immersedHx)
-    
+    use spfGlobalConst, only: PI
+
     use hxModule
     use iceStoreDef  
 
@@ -1201,7 +1202,7 @@ end subroutine reCalculateMIceFromOutsideMelting
     
     subroutine reDistributeIce(iceStore)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use hxModule
         use iceStoreDef
     
@@ -1291,7 +1292,7 @@ end subroutine reCalculateMIceFromOutsideMelting
 
     subroutine checkStorageStatus(iceStore,immersedHx)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use hxModule
         use iceStoreDef
     

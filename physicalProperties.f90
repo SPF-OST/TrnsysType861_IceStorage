@@ -10,7 +10,6 @@
 module physProp
 
     use util
-    use spfGlobalConst
     
     implicit none
     
