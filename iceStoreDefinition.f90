@@ -7,10 +7,7 @@
 !> all the variables needed for the ice storage tank.
 !--------------------------------------------------------------------------      
 
-module iceStoreConst
-            
-    use spfGlobalConst
-    
+module iceStoreConst    
     integer, parameter ::   nMax=100,& ! maximum number of tank nodes allowed
                             nIHX=4     !  Maximum number of immersed heat exchangers                        
                                                           

@@ -220,7 +220,6 @@
      subroutine calculateStorage(iceStore,oneD,immersedHx,recalculateMass)
      
         use solvers
-        use spfGlobalConst
         use iceStoreFunc
         use hxFunc
         use spfAlgorithmConst
@@ -393,7 +392,8 @@
    
   
   subroutine calculateQvFromMeltHXCv(immersedHx,iceStore,oneD,i,areaRef) ! qv from melting in ice all Hx is calculated
-        
+    use spfGlobalConst, only: PI
+
     use hxModule
     use iceStoreDef
     use TrnsysFunctions

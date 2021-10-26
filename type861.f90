@@ -354,6 +354,7 @@ subroutine TYPE861
 end SUBROUTINE TYPE861
 
 subroutine printMyOutFile(iceStore,immersedHx)
+    use spfGlobalConst, only: PI
     use iceStoreDef
     use hxModule
     use interpolation
