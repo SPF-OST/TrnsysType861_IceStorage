@@ -9,7 +9,6 @@
 module heatTransferCoef
 
     use physProp
-    use spfGlobalConst
     use TrnsysFunctions
     use TrnsysConstants
     
@@ -35,6 +34,7 @@ module heatTransferCoef
     end function getHydraulicDiameter
     
     subroutine calculateHeatTransCoefPipeInWong(tBulk,conc,D,L,mIn,alphaIn,thick,crossSectionType,enhancedNu)
+        use spfGlobalConst, only: PI
     
         implicit none
         
@@ -90,7 +90,7 @@ module heatTransferCoef
 
     subroutine calculateHeatTransCoefPipeIn(tBulk,conc,thick,lenght,vel,hIn,flatPlate,enhancedNu,iUnit,iType,Re,Nu_i)
             
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
               
         implicit none
         
@@ -169,7 +169,7 @@ module heatTransferCoef
   
      subroutine calculateHeatTransCoefFlatPlate(tBulk,conc,thick,width,lenght,vel,hIn,enhancedNu,iUnit,iType,Re,Nu)
             
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use Trnsysfunctions
         use interpolation
         
@@ -246,7 +246,7 @@ module heatTransferCoef
      
     subroutine calculateHeatTransCoefPipeOut(tFilm,tInf,tWall,lenght,hOut)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: g
         implicit none
         
         double precision, intent(in)  :: lenght,tFilm,tInf,tWall
@@ -294,7 +294,7 @@ module heatTransferCoef
   
     subroutine calculateHeatTransCoefImmersedPlate(tFilm,tFluid,tWall,lChar,hOut,cUserDefined,nUserDefined,Ra,Nu,iUnit,iType)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use interpolation
         implicit none
         
@@ -377,7 +377,7 @@ module heatTransferCoef
     
     subroutine calculateHeatTransCoefImmersedMorgan(tFilm,tFluid,tWall,lChar,hOut,cUserDefined,nUserDefined,Ra,Nu,iUnit,iType)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use interpolation
         implicit none
         
@@ -417,7 +417,7 @@ module heatTransferCoef
     
       subroutine calculateHeatTransCoefImmersedPipe(tFilm,tFluid,tWall,lChar,hOut,cUserDefined,nUserDefined,Ra,Nu,iUnit,iType)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use interpolation
         implicit none
         
@@ -489,7 +489,7 @@ module heatTransferCoef
 
       subroutine calculateHeatTransCoefIceToWater(tFilm,tFluid,tWall,d,hOut,cUserDefined,nUserDefined,Ra,Nu,iUnit,iType)
     
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use interpolation
         implicit none
         
@@ -847,6 +847,7 @@ module heatTransferCoef
 !---------------------------------------------------------------------------------
 
     double precision function getGraetz  (D,L,Re,Pr) 
+        use spfGlobalConst, only: PI
     
         double precision, intent(in) :: D,L,Re,Pr        
                

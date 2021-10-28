@@ -28,7 +28,7 @@ module hxFunc
     subroutine setDefaultHx(oneImmersedHx)
 
         use hxModule  
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
     
         implicit none
     
@@ -126,7 +126,7 @@ module hxFunc
 
         use hxModule  
         use iceStoreDef
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
     
         implicit none
     
@@ -978,7 +978,8 @@ end subroutine resetHxToOldTimeStep
   
   
   subroutine calculateIceHxThicknessPipeCv(iceStore,oneImmersedHx,n)    
-    
+    use spfGlobalConst, only: PI
+
     use hxModule       
     use iceStoreDef
     use iceStoreConst
@@ -1442,6 +1443,7 @@ end subroutine calculateIceHxThickness
 !--------------------------------------------------------------------------
 
     subroutine calculateInternalHeatTransferCoef(iceStore,oneImmersedHx,tFluid,hIn)
+        use spfGlobalConst, only: PI
 
         use iceStoreDef
         use hxModule
@@ -1761,7 +1763,7 @@ end subroutine calculateIceHxThickness
    
     
     subroutine calculateGeoHx(immersedHx,iceStore)
-    
+        use spfGlobalConst, only: PI
         use iceStoreDef
         
         type(hxStruct), intent(inout) :: immersedHx(nIHX)
@@ -1832,7 +1834,7 @@ end subroutine calculateIceHxThickness
 
         use hxModule
         use iceStoreDef
-        use spfGlobalConst
+        use spfGlobalConst, only: PI
         use heatTransferCoef
         use interpolation
         
@@ -2195,7 +2197,7 @@ end subroutine calculateIceHxThickness
     
     subroutine getOverlappingAngle(iceStore,x1,y1,ntubesX,ntubesY,rIce1,rIce2,rPipe,phiOverlap)
     
-        use spfGlobalConst 
+        use spfGlobalConst, only: PI
         use iceStoreConst               
         use iceStoreDef        
         
@@ -2270,7 +2272,7 @@ end subroutine calculateIceHxThickness
     
     subroutine getOverlappingAngleMattia(iceStore,x1,y1,rIce1,rIce2,rPipe,ntubesX,ntubesY,f)
                  
-        use spfGlobalConst 
+        use spfGlobalConst, only: PI
         use iceStoreConst               
         use iceStoreDef
         
@@ -2370,7 +2372,7 @@ end subroutine calculateIceHxThickness
     
     subroutine getOverlappingAngleMattiaLowArea(iceStore,x1,y1,rIce1,rIce2,rPipe,ntubesX,ntubesY,f)
                  
-        use spfGlobalConst 
+        use spfGlobalConst, only: PI
         use iceStoreConst               
         use iceStoreDef
         
@@ -2454,7 +2456,7 @@ end subroutine calculateIceHxThickness
     
      subroutine getOverlappingAngleMattiaOld(iceStore,x1,y1,rIce1,rIce2,rPipe,ntubesX,ntubesY,f)
                  
-        use spfGlobalConst 
+        use spfGlobalConst, only: PI
         use iceStoreConst               
         use iceStoreDef
         
