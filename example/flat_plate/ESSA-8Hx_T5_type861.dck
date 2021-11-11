@@ -270,7 +270,7 @@ notused
 heightIceHx      ! 28 Height of iceable heat exchanger
 maxIceFracIceLayer 
 useTwallOld
-notused
+1 ! it is not used but let it to 1 to avoid / zero. this is to be changed...
 PhysicalPropConst
 useCorrugatedPlate 
      *** HEAT EXCHANGER 1   (used as defrostable HX at bottom)
